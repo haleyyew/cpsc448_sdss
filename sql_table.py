@@ -37,7 +37,10 @@ class SqlTable:
 
     def add_row(self, row_values):
         key = self.hash_list_of_key_indexes_to_key(row_values)
-        self.table_rows[key] = row_values
+        if key in self.table_rows:
+            self.table_rows[key+'__1'] = row_values
+        else:
+            self.table_rows[key] = row_values
         print("Added row key: ", key, "values: ", '|'.join(self.table_rows[key]))
         self.num_rows += 1
 
