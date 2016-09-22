@@ -1,6 +1,8 @@
-domainID,city
+domainID,city,status
 ---,--
-10,Vancouver
-20,Seattle
+10,Vancouver,happy
+10,Vancouver,sad
+20,Seattle,happy
+20,Seattle,sad
 
 (rows affected)
