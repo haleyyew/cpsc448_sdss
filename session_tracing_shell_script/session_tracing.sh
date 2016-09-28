@@ -121,6 +121,7 @@ ORDER BY x.up_id,47,685866,1
 "
 #BUT temporary tables #x, #upload were used, cannot execute query without #x, #upload
 
+#####VERIFY RESULTS ON CASJOBS#######################################
 #RETRY with another statement
 awk -F, '$1 == 1140007 { print;for(i=0; i<=100; i++) { getline;print;} }' sqlstatement.csv
 '
@@ -146,3 +147,52 @@ awk -F, '$18 == 1140007 { print }' sqllog.csv
 #https://skyserver.sdss.org/CasJobs/SubmitJob.aspx
 #Context=DR5 
 #got 2 rows back
+
+#find 'requestor' is not "cas.sdss.org"
+awk -F, '$11 != "cas.sdss.org" { print }' sqllog.csv
+#most others are empty in this field
+#find 'access' is not "casjobs"
+awk -F, '$14 != "casjobs" { print }' sqllog.csv
+#most other 'access' is "public"
+
+
+#####FIND THE WEBAGENT OF QUERY(UNSUCCESSFUL)########################
+#from 'sqlID' 1975882, find the 'logID' in column 9
+#'logID' is 2035 
+#find that row with 'logID' in LogSource.csv
+awk -F, '$1 == 2035 { print }' LogSource.csv
+'
+2035,FNAL,SQL,DR5e,cas.sdss.org/dr5,SQL,DR5,TSQL,[SDSSSQL016.FNAL.GOV].weblog,2008-11-01 00:00:00.000,1,INACTIVE
+'
+#go to weblog.csv to find row with that 'logID'
+awk -F, '$9 == 2035 { print }' weblog.csv
+'
+674191238,2010,11,27,0,23,7,2010-11-27 00:23:07,8001,332532,3,213548,114476154,200,404539,2154,339,0,True,False,False,False,1,1,True
+674191239,2010,12,24,18,43,15,2010-12-24 18:43:15,8001,332532,3,25413,114476154,200,404539,2154,339,0,True,False,False,False,1,1,True
+674191240,2010,12,9,0,3,12,2010-12-09 00:03:12,8001,332532,3,345932,107900588,200,404539,2226,339,0,True,False,False,False,1,1,True
+932053883,2012,8,13,9,51,49,2012-08-13 09:51:49,34,4660807,3,417867,102428503,200,577464,0,0,-1,True,False,False,False,1,3,False
+932053884,2012,8,10,20,46,35,2012-08-10 20:46:35,34,4764952,3,648794,187041476,200,578150,0,0,-1,True,True,False,False,1,3,False
+932053885,2012,8,10,20,46,34,2012-08-10 20:46:34,34,4764952,3,640997,187041476,200,578150,0,0,-1,True,True,False,False,1,3,False
+932053886,2012,8,13,9,57,36,2012-08-13 09:57:36,34,4660807,3,647169,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053887,2012,8,13,9,57,36,2012-08-13 09:57:36,34,4660807,3,346888,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053888,2012,8,13,9,57,59,2012-08-13 09:57:59,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053889,2012,8,13,9,57,19,2012-08-13 09:57:19,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053890,2012,8,13,9,57,50,2012-08-13 09:57:50,41,4660807,3,375895,102428503,404,577464,0,0,-1,True,False,False,False,1,3,False
+932053891,2012,8,13,9,57,49,2012-08-13 09:57:49,41,4660807,3,375895,102428503,404,577464,0,0,-1,True,False,False,False,1,3,False
+932053892,2012,8,13,9,55,38,2012-08-13 09:55:38,34,4660807,3,341471,102428503,200,577464,0,0,-1,True,False,False,False,1,3,False
+932053893,2012,8,13,9,55,38,2012-08-13 09:55:38,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053894,2012,8,13,9,52,2,2012-08-13 09:52:02,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053895,2012,8,13,9,57,36,2012-08-13 09:57:36,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053896,2012,8,13,9,51,49,2012-08-13 09:51:49,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+932053897,2012,8,13,9,51,44,2012-08-13 09:51:44,34,4660807,3,201127,102428503,200,577464,0,0,-1,True,False,False,False,1,3,False
+932053898,2012,8,13,9,51,44,2012-08-13 09:51:44,34,4660807,3,134729,102428503,200,577464,0,0,-1,True,False,False,False,1,3,False
+932053899,2012,8,13,9,51,43,2012-08-13 09:51:43,34,4660807,3,126399,102428503,304,577464,0,0,-1,True,False,False,False,1,3,False
+'
+#found 3 'agentStringID' 404539, 577464, and 578150
+#BUT none of it is logged at the correct time, the time of the query is in column 8 of sqllog.csv
+#get the 'agentStringID' for that row in column 15, 
+#use 'agentStringID' to search weagentstring.csv
+#get the 'agentID' for that row
+#use the 'agentID' to search WebAgent.csv
+#find the 'class' for that row
+#'class' can either be BOT, ADMIN, etc.

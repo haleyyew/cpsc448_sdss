@@ -1,0 +1,46 @@
+\begin{thebibliography}{1}
+
+\bibitem{cas_dr12}
+Skyserver dr12 sql search.
+\newblock \url{http://cas.sdss.org/dr12/en/tools/search/sql.aspx}.
+\newblock Accessed: 2016-09-24.
+
+\bibitem{hirota2016mining}
+V.~M. Hirota, R.~Santos, J.~Raddick, and A.~Thakar.
+\newblock Mining the sdss skyserver sql queries log.
+\newblock In {\em SPIE Defense+ Security}, pages 98510S--98510S. International
+  Society for Optics and Photonics, 2016.
+
+\bibitem{makiyama2015text}
+V.~H. Makiyama, M.~J. Raddick, and R.~D. Santos.
+\newblock Text mining applied to sql queries: A case study for the sdss
+  skyserver.
+\newblock In {\em 2nd Annual International Symposium on Information Management
+  and Big Data}, page~66, 2015.
+
+\bibitem{raddick2014ten1}
+M.~J. Raddick, A.~R. Thakar, A.~S. Szalay, and R.~D. Santos.
+\newblock Ten years of skyserver i: Tracking web and sql e-science usage.
+\newblock {\em Computing in Science \& Engineering}, 16(4):22--31, 2014.
+
+\bibitem{raddick2014ten2}
+M.~J. Raddick, A.~R. Thakar, A.~S. Szalay, and R.~D. Santos.
+\newblock Ten years of skyserver ii: How astronomers and the public have
+  embraced e-science.
+\newblock {\em Computing in Science \& Engineering}, 16(4):32--40, 2014.
+
+\bibitem{singh2007skyserver}
+V.~Singh, J.~Gray, A.~Thakar, A.~S. Szalay, J.~Raddick, B.~Boroski,
+  S.~Lebedeva, and B.~Yanny.
+\newblock Skyserver traffic report-the first five years.
+\newblock {\em arXiv preprint cs/0701173}, 2007.
+
+\bibitem{szalay2002sdss}
+A.~S. Szalay, J.~Gray, A.~R. Thakar, P.~Z. Kunszt, T.~Malik, J.~Raddick,
+  C.~Stoughton, and J.~vandenBerg.
+\newblock The sdss skyserver: public access to the sloan digital sky server
+  data.
+\newblock In {\em Proceedings of the 2002 ACM SIGMOD international conference
+  on Management of data}, pages 570--581. ACM, 2002.
+
+\end{thebibliography}
