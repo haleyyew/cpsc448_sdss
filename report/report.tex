@@ -89,12 +89,12 @@ Haoran Yu
 %\terms{Theory}
 
 \section{Data Description}
-Sloan Digital Sky Survey (SDSS) is an astronomy project that  aims to provide a digital map of the sky~\cite{szalay2002sdss}.  SDSS data includes raw images of the sky and measurements known as \textit{scientific attributes}, which are numerical estimates of the  physical attributes of  objects in the images~\cite{szalay2002sdss}.   The science parameters are  stored in a database system called the the Catalog Archive Server (CAS) database. Access to the CAS data is provided through several data access interfaces, including the SkySever website, which provides a web-based interface for writing SQL queries.There are also  SQL templates provided by SkyServer to assist users in constructing queries \cite{raddick2014ten1,szalay2002sdss}.
+Sloan Digital Sky Survey (SDSS) is an astronomy project that  aims to provide a digital map of the sky~\cite{szalay2002sdss}.  SDSS data includes raw images of the sky and measurements known as \textit{scientific attributes}, which are numerical estimates of the  physical attributes of  objects in the images~\cite{szalay2002sdss}.   The scientific attributes are  stored in a database system called the the Catalog Archive Server (CAS) database. Access to the CAS data is provided through several data access interfaces, including the SkySever website, which provides a web-based interface for writing SQL queries. There are also  SQL templates provided by SkyServer to assist users in constructing queries \cite{raddick2014ten1,szalay2002sdss}.
  %The celestial objects and their attributes are stored in SQL Server/ObjectivityDB backend database servers along with the captured images and spectrographs \cite{szalay2002sdss}.
 %Front end portals to access the SDSS data is SkyServer, where it offers a web interface for web browsers and also allows users to submit raw SQL queries for SDSS data \cite{szalay2002sdss}. 
 %. 
 
-Web hits and SQL queries submitted via the access interfaces to the CAS, are logged and  provided in the SkyServer or SDSS log data~\cite{singh2007skyserver,raddick2014ten1,raddick2014ten2}. These logs include information about the IP address submitted the query or web hit, webpage views, web agent, date stamps, the submitted SQL queries, and the data release that was queried~\cite{szalay2002sdss}. 
+SQL queries submitted via the access interfaces to the CAS are logged and  provided in the SkyServer logs data~\cite{singh2007skyserver,raddick2014ten1,raddick2014ten2}. These logs include information about the IP address that submitted the query, the web agent, the time stamp, the SQL query statement, and the version of the database that it queried~\cite{szalay2002sdss}. 
 
 %Access patterns of the web interface and SQL query interface of SkyServer have been studied by parsing the logs \cite{hirota2016mining}. Website traffic have been studied by Singh \cite{singh2007skyserver} and Raddick \cite{raddick2014ten1}, and preliminary studies of SQL query pattern were \textcolor{red}{done in} \cite{hirota2016mining}. 
 
@@ -106,11 +106,11 @@ Generally, there are 3 datasets associated with the SDSS project:
 \footnote{You need to put labels for the figures, then you refer to the labels in the tex files, rather than name the figures in the text. There is no point in introducing the figures here, since  they were not described in detail, the reader doesn't gain anything from looking at the figures at this point.}
 \footnote{for the datasets below, we need statistics for the most recent release of the data. So, for the CAS database, you need to say which release the schema corresponds to and how many tables, attributes, etc it contains. Similarly for the rest of the datasets.}
 
-\noindent \textbf{CAS database. } The CAS dataset stores the scientific attributes of celestial objects identified in the captured photos, the corresponding photos can be retrieved from the Data Archive Server (DAS) at a physical sciences laboratory called Fermilab \cite{szalay2002sdss} The schema for the original CAS database is shown  in Figure~\ref{fig:schemaCAS}\footnote{For all these figures, you need to cite the original paper you took it from}. SDSS releases new versions of data yearly to update and expand the astronomy data, each version is called a Data Release (DR). A recent data release (Data Release 12) has expanded the original CAS database schema to 115 tables, and offers 59 views, 231 functions and 21 procedures for queries \cite{raddick2014ten1}. In DR12, tables such as PhotoObjAll have over 350 table attributes and has as many as 790 million tuples \cite{cas_dr12}. Among the tables, PhotoObjAll, SpecObjAll, and Profile store the primary scientific attributes for the photos and spectrograph of all the celestial objects. 
+\noindent \textbf{CAS database. } The CAS dataset stores the scientific attributes of celestial objects identified in the captured photos, the corresponding photos can be retrieved from the Data Archive Server (DAS) at the Fermilab physical sciences laboratory  \cite{szalay2002sdss} The schema for the original CAS database is shown  in Figure~\ref{fig:schemaCAS}\footnote{For all these figures, you need to cite the original paper you took it from}. SDSS releases new versions of data yearly to update and expand the astronomy data, each version is called a Data Release (DR). A recent data release (Data Release 12) has expanded the original CAS database schema to 115 tables, and offers 59 views, 231 functions and 21 procedures for queries \cite{raddick2014ten1}. In DR12, tables such as PhotoObjAll have over 350 table attributes and has as many as 790 million tuples \cite{cas_dr12}. Among the tables, PhotoObjAll, SpecObjAll, and Profile store the primary scientific attributes of the photos and spectrographs of the celestial objects. 
 
-\noindent \textbf{SkyServer logs dataset. }The SkyServer logs dataset aggregates each attempt to access the web interfaces and submission of SQL queries since 2001 and is publicly accessible \cite{singh2007skyserver, raddick2014ten1, raddick2014ten2}. \footnote{The have three papers on this, first 5 years, then two on the first 10 years. You need to cite all three here.} The schema for this dataset is shown in Figure~\ref{fig:schemaSSLogsDB} . Logs are harvested from the server every hour and stored in 7 tables \cite{singh2007skyserver}. WebLogAll and SqlLogAll, which stores each web page hit and each SQL query, can be accessed online\footnote{All the tables are accessible, why this statement? the web interface allows simple select queries on the two tables, but you have access to all the data if you download it.}. The web logs have recorded 630 million webpage views\cite{raddick2014ten2} and has logged over 330 million submitted SQL queries \cite{hirota2016mining} from 2001 to 2011. 
+\noindent \textbf{SkyServer logs dataset. }The SkyServer logs dataset aggregates each attempt to access the web interfaces and submission of SQL queries since 2001 and is publicly accessible \cite{singh2007skyserver, raddick2014ten1, raddick2014ten2}. \footnote{The have three papers on this, first 5 years, then two on the first 10 years. You need to cite all three here.} The schema for this dataset is shown in Figure~\ref{fig:schemaSSLogsDB} . Logs are harvested from the server every hour and stored in 7 tables \cite{singh2007skyserver}. The WebLog and SqlLog tables, which store each web page visit and each SQL query submitted, can be accessed online\footnote{All the tables are accessible, why this statement? the web interface allows simple select queries on the two tables, but you have access to all the data if you download it.}. The web logs have recorded 630 million webpage views\cite{raddick2014ten2} and has logged over 330 million submitted SQL queries \cite{hirota2016mining} from 2001 to 2011. 
 
-\noindent \textbf{Normalized SkyServer logs. }The third dataset is a subset of the SkyServer logs dataset storing data from 2001 to 2011, this dataset is normalized to reduce its storage size\cite{raddick2014ten1}. The normalization process involves moving common items such as IP addresses in WebLog and query statements in SqlLog to a separate table, and replacing the items in the original WebLog and SqlLog with foreign keys to reference the items in the separate tables\cite{raddick2014ten1}. The schema for this dataset is shown in Figure~\ref{fig:schemaSSNormalizedLogs}. These separate tables are called ancillary tables, such as the ipDomain, session, Webagent, and SqlStatement tables. The modified dataset is publicly accessible and was used for SkyServer traffic analysis and SQL usage analysis \cite{singh2007skyserver, raddick2014ten1}. There are 14 tables in total, and all tables have less than 30 attributes \cite{raddick2014ten1}. The normalized logs were later expanded to include data until 2015 in \cite{hirota2016mining} but is not publicly available, therefore we will use dataset until 2011 to perform further SQL usage analysis. 
+\noindent \textbf{Normalized SkyServer logs. }The third dataset is a subset of the SkyServer logs dataset storing data from 2001 to 2011, this dataset is normalized to reduce its storage size\cite{raddick2014ten1}. The normalization process involves moving common items such as IP addresses in WebLog and query statements in SqlLog to a separate table, and replacing the items in the original WebLog and SqlLog with foreign keys to reference the items in the separate tables\cite{raddick2014ten1}. The schema for this dataset is shown in Figure~\ref{fig:schemaSSNormalizedLogs}. These separate tables are called ancillary tables, such as ipDomain, session, Webagent, and SqlStatement. The modified dataset is publicly accessible and was used for SkyServer traffic analysis and SQL usage analysis \cite{singh2007skyserver, raddick2014ten1}. There are 14 tables in total, and all tables have less than 30 attributes \cite{raddick2014ten1}. The normalized logs were later expanded to include data until 2015 in \cite{hirota2016mining} but is not publicly available, therefore we will use dataset until 2011 to perform further SQL usage analysis. 
 
 \begin{table*}
 \centering
@@ -146,8 +146,8 @@ Normalized SkyServer Logs & 14 & approx. 30& approx. 630 million\\ \hline
 
 \section{Sessions}
 \textcolor{blue}{Summary of procedure for data processing in 10 years paper-1: 
-Client IP addresses and agent strings: First agent strings in the logs are associated with Web agents. These web agents are then classified into 5 classes: anonymous, bot, administrative service, user program, or Web browser. This is stored in agentinformation table. 
-Then, the domains of the IP addresses in the web hits are resolved, and categorized into ~1047 domain organizations.The domain organizations are further categorized into: research institution, university, college, community college, k-12 institution, ISP, non-ISP, and government organization. (this info may not be available to us.)}
+Client IP addresses and agent strings: First, agent strings in the logs are associated with Web agents. These web agents are then classified into 5 classes: anonymous, bot, administrative service, user program, or Web browser. This is stored in the agent table. 
+Then, the domains of the IP addresses in the web hits are resolved, and categorized into ~1047 domain organizations. The domain organizations are further categorized into: research institution, university, college, community college, k-12 institution, ISP, non-ISP, and government organization. (this info may not be available to us.)}
 
 According to~\cite{raddick2014ten1}, a \textit{hit}  ``comes from a Web browser, or a program that the user has written to download data, and has a command requesting a file type that delivers information to the end user. '' \footnote{\textcolor{red}{Based on this definition, it seems only hits from user program and web browser information are logged. }}
 For weblogs , a hit is a pageview, and each row in a weblog is a hit. A pageview is indicated in the normalized weblog table with a boolean flag variable. 
@@ -156,17 +156,31 @@ For SQL query logs, a hit is a query.
 As defined by~\cite{raddick2014ten1}, a \textit{session} is an ordered sequence of hits from a single IP address, such that the gaps between hits in the sequence is no longer than 30 minutes. If an additional hit occurs after the 30 minutes gap for that IP, a new session is declared. 
 
 
-\subsection{Tracing a Session} \textcolor{blue}{Here we need an example for a session, that is, a sequence of hits/queries submitted by a user.  Trace the session, and put relevant hits/queries here in a figure.
-Questions to address : \begin{itemize}
-\item How can we  group the sql query logs based on the access interface they were submitted through? e.g, CASjobs or SkyServer web-based interface.  Do we need to filter the queries to select those that come from the web-based access interface only? 
-\item Can we distinguish between logs based on their agent strings, and should we do this, since, based on the definition of hit,  it seems only hits from user programs and web browser information are logged.
-\end{itemize} 
-How to trace the path that users follow?  query the two tables:
-\begin{itemize}
-\item sessionlogs table: combined weblog and Sql log data sorted by client IP address and then time. IDs of logs should be here.
-\item The sessions table: information about each session, including client IP address, start and end time, and the number of web hits and SQL queries in that session.
-\end{itemize} }
-The challenge\footnote{Why is this a challenge? We should be able to trace the session using the schema. What you need perhaps is an example sql query that joins the tables, and returns the queries in that session.} for studying the SQL usage pattern by sessions is to trace each session to construct the original query submitted. This can be achieved by joining multiple tables in the normalized logs dataset. For example, a session table defines individual sessions and the sessionLogs table stores all requests of all sessions with the rankInSession attribute that orders all requests of each session sequentially. sessionLogs table also stores the necessary pointers to the WebLog and SqlLog tables to retrieve the original query. Studying the results returned by each query assists our usage pattern analysis. However, since the SqlLog does not store the results returned by submitting the query - it only stores the number of rows returned - we will need submit the query to Skyserver to retrieve the contents of the rows.
+\subsection{Tracing a Session} 
+To study the SQL usage pattern by a session, we will trace each session to reconstruct the original queries that were submitted. This can be achieved by joining multiple tables in the normalized logs dataset. For example, a session table defines individual sessions and the sessionLogs table stores all requests of all sessions with the rankInSession attribute that orders all requests of each session sequentially. sessionLogs table also stores the necessary pointers to the WebLog and SqlLog tables to retrieve the original query. Studying the results returned by each query assists our usage pattern analysis. However, since the SqlLog does not store the results returned by submitting the query - it only stores the number of rows returned - we will need submit the query to Skyserver to retrieve the query results.
+
+We provide an example for a session, that is, a sequence of hits/queries submitted by a user.  We traced the session, and obtained the hits/queries of the session in the table below. 
+
+\begin{table*}
+\centering
+\caption{Summary of tracing a session with sessionID 100000 using the normalized Skyserver logs}
+\begin{tabular}{llllll}
+sessionID & rankInSession & sessionAddressString & theTime                 & statementID & rows \\
+100000    & 1             & 155.198.204.142      & 2008-04-21,13:04:05.000 & 48063987    & 1    \\
+100000    & 2             & 155.198.204.142      & 2008-04-21,13:04:06.000 & 48063987    & 1    \\
+100000    & 3             & 155.198.204.142      & 2008-04-21,13:04:10.000 & 48063987    & 1    \\
+100000    & 4             & 155.198.204.142      & 2008-04-21,13:04:15.000 & 48063987    & 1    \\
+100000    & 5             & 155.198.204.142      & 2008-04-21,13:04:15.000 & 48063987    & 1    \\
+100000    & 6             & 155.198.204.142      & 2008-04-21,13:04:22.000 & 48063987    & 1    \\
+100000    & 7             & 155.198.204.142      & 2008-04-21,13:04:26.000 & 48390699    & 51   \\
+100000    & 8             & 155.198.204.142      & 2008-04-21,13:04:34.000 & 48390699    & 51   \\
+100000    & 9             & 155.198.204.142      & 2008-04-21,13:04:34.000 & 48063987    & 1    \\
+100000    & 10            & 155.198.204.142      & 2008-04-21,13:04:40.000 & 48063987    & 1    \\
+100000    & 11            & 155.198.204.142      & 2008-04-21,13:04:58.000 & 48063987    & 1   
+\end{tabular}
+\end{table*}
+
+The method used to trace a session is described in pseudo-SQL. Here, we trace a session with sessionID 100000.
 
 \begin{lstlisting}
 --TRACING A SESSION--
@@ -226,26 +240,8 @@ and wl.agentStringID = was.agentID
 and was.agentID = wa.agentID
 \end{lstlisting}
 
-\begin{table*}
-\centering
-\caption{Summary of tracing a session with sessionID 100000 using the normalized Skyserver logs}
-\begin{tabular}{llllll}
-sessionID & rankInSession & sessionAddressString & theTime                 & statementID & rows \\
-100000    & 1             & 155.198.204.142      & 2008-04-21,13:04:05.000 & 48063987    & 1    \\
-100000    & 2             & 155.198.204.142      & 2008-04-21,13:04:06.000 & 48063987    & 1    \\
-100000    & 3             & 155.198.204.142      & 2008-04-21,13:04:10.000 & 48063987    & 1    \\
-100000    & 4             & 155.198.204.142      & 2008-04-21,13:04:15.000 & 48063987    & 1    \\
-100000    & 5             & 155.198.204.142      & 2008-04-21,13:04:15.000 & 48063987    & 1    \\
-100000    & 6             & 155.198.204.142      & 2008-04-21,13:04:22.000 & 48063987    & 1    \\
-100000    & 7             & 155.198.204.142      & 2008-04-21,13:04:26.000 & 48390699    & 51   \\
-100000    & 8             & 155.198.204.142      & 2008-04-21,13:04:34.000 & 48390699    & 51   \\
-100000    & 9             & 155.198.204.142      & 2008-04-21,13:04:34.000 & 48063987    & 1    \\
-100000    & 10            & 155.198.204.142      & 2008-04-21,13:04:40.000 & 48063987    & 1    \\
-100000    & 11            & 155.198.204.142      & 2008-04-21,13:04:58.000 & 48063987    & 1   
-\end{tabular}
-\end{table*}
+After tracing a session with sessionID 100000, the following SQL query statements were retrieved from the logs.
 
-After tracing a session with sessionID 100000, the following SQL query statements were retrieved from the logs:
 \begin{lstlisting}
 --statementID 48063987
 SELECT u.up_name as name, 
@@ -265,6 +261,25 @@ FROM #x x, #upload u, PhotoTag p
 WHERE u.up_id = x.up_id and x.objID=p.objID
 ORDER BY x.up_id
 \end{lstlisting}
+
+
+\textcolor{blue}{Questions to address : \begin{itemize}
+\item How can we  group the sql query logs based on the access interface they were submitted through? e.g, CASjobs or SkyServer web-based interface.  Do we need to filter the queries to select those that come from the web-based access interface only? 
+\item Can we distinguish between logs based on their agent strings, and should we do this, since, based on the definition of hit,  it seems only hits from user programs and web browser information are logged.
+\end{itemize} 
+How to trace the path that users follow?  query the two tables:
+\begin{itemize}
+\item sessionlogs table: combined weblog and Sql log data sorted by client IP address and then time. IDs of logs should be here.
+\item The sessions table: information about each session, including client IP address, start and end time, and the number of web hits and SQL queries in that session.
+\end{itemize} }
+
+
+
+
+
+
+
+
 
 
 

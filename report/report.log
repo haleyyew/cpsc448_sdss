@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.16)  28 SEP 2016 15:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.16)  30 SEP 2016 09:52
 entering extended mode
 **./report.tex
 (report.tex
@@ -376,14 +376,14 @@ File: Figures/schema3.pdf Graphic file (type pdf)
 <use Figures/schema3.pdf>
 Package pdftex.def Info: Figures/schema3.pdf used on input line 142.
 (pdftex.def)             Requested size: 377.9915pt x 263.146pt.
-LaTeX Font Info:    Try loading font information for T1+aett on input line 171.
+LaTeX Font Info:    Try loading font information for T1+aett on input line 185.
 
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 ) [2] [3 <./Figures/schema1.pdf>] [4 <./Figures/schema2.pdf> <./Figures/schema3
 .pdf>]
-Overfull \hbox (31.69128pt too wide) in paragraph at lines 284--285
+Overfull \hbox (31.69128pt too wide) in paragraph at lines 299--300
 []\T1/aett/m/n/9 `from_bestobjid'\T1/aer/m/n/9 , []\T1/aett/m/n/9 `from_inner'\
 T1/aer/m/n/9 , []\T1/aett/m/n/9 `from_join'\T1/aer/m/n/9 , []\T1/aett/m/n/9 `fr
 om_photoobj'\T1/aer/m/n/9 ,
@@ -395,11 +395,11 @@ om_photoobj'\T1/aer/m/n/9 ,
 Here is how much of TeX's memory you used:
  4465 strings out of 493334
  59866 string characters out of 3136681
- 365301 words of memory out of 3000000
+ 343301 words of memory out of 3000000
  7867 multiletter control sequences out of 15000+200000
  56171 words of font info for 83 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,9n,37p,1453b,1486s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,9n,37p,1453b,1487s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.
 enc}<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.pfb
 ><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:
@@ -413,7 +413,7 @@ les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Program Files
 2.9/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/font
 s/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw
 /times/utmr8a.pfb>
-Output written on report.pdf (6 pages, 1283101 bytes).
+Output written on report.pdf (6 pages, 1283260 bytes).
 PDF statistics:
  82 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
