@@ -9,8 +9,8 @@ class SqlTable:
         self.attributes = []
         self.list_of_keys = []
         self.list_of_key_indexes = []
-        self.add_to_special_group = False
-        self.special_group = {}
+        self.add_to_session_group = False
+        self.session_group = {}
 
     def declare_table_attributes(self, attributes):
         self.attributes = attributes[:]
@@ -25,8 +25,9 @@ class SqlTable:
             except(Exception):
                 print "Exception in declare_list_of_keys for ", self.table_name
                 return
-        if len(list_of_keys) > 1:
-            self.add_to_special_group = True
+        #if len(list_of_keys) > 1:
+        if self.table_name == 'sessionlog':
+            self.add_to_session_group = True
 
     def hash_list_of_key_indexes_to_key(self, row_values):
         hash_string = ""
@@ -45,14 +46,14 @@ class SqlTable:
             self.table_rows[key] = row_values
         self.num_rows += 1
 
-        if self.add_to_special_group == True:
+        if self.add_to_session_group == True:
             group_key = row_values[self.list_of_key_indexes[0]]
-            if group_key in self.special_group:
-                self.special_group[group_key].append(self.table_rows[key])
+            if group_key in self.session_group:
+                self.session_group[group_key].append(self.table_rows[key])
             else:
                 group = []
                 group.append(self.table_rows[key])
-                self.special_group[group_key] = group
+                self.session_group[group_key] = group
 
     def get_row(self, key):
         row = []

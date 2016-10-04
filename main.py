@@ -8,30 +8,29 @@ import open_csv
 import table_join
 import pprint
 
-def unit_test3():
-    config = ConfigParser.ConfigParser()
-    config.read('config.ini')
+def unit_test3(config):
 
     sessionlog_keys = config.get('Table1', 'keys').split(',')
-    sessionlog_table = open_csv.open_csv_file(config.get('Table1','path'), sessionlog_keys, config.get('Table1','table_name'))
+    sessionlog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table1','path'),
+                                              sessionlog_keys, config.get('Table1','table_name'))
 
     SqlLog_keys = config.get('Table2','keys').split(',')
-    SqlLog_table = open_csv.open_csv_file(config.get('Table2','path'), SqlLog_keys, config.get('Table2','table_name'))
+    SqlLog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table2','path'),
+                                          SqlLog_keys, config.get('Table2','table_name'))
 
     my_join_attr = config.get('Table1','my_join_attributes').split(',')
     other_join_attr = config.get('Table1','their_join_attributes').split(',')
     table_join.table_join(sessionlog_table,my_join_attr,SqlLog_table,other_join_attr)
 
     SqlStatement_keys = config.get('Table3','keys').split(',')
-    SqlStatement_table = open_csv.open_csv_file(config.get('Table3','path'), SqlStatement_keys, config.get('Table3','table_name'))
+    SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
+                                                SqlStatement_keys, config.get('Table3','table_name'))
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')
     table_join.table_join(SqlLog_table,my_join_attr,SqlStatement_table,other_join_attr)
 
     return sessionlog_table
-
-
 
 def flatten(l):
     sub_list = []
@@ -43,14 +42,22 @@ def flatten(l):
     return sub_list
 
 if __name__ == '__main__':
-    table = unit_test3()
+    config = ConfigParser.ConfigParser()
+    config.read('config.ini')
 
-    for group in table.special_group:
+    table = unit_test3(config)
+
+    num_of_sessions = int(config.get('Config','num_of_sessions'))
+    sessions_counter = 0
+
+    for group in table.session_group:
+        sessions_counter += 1
+        if sessions_counter > num_of_sessions:
+            break
         #pprint.pprint(table.special_group[group])
-        #print("")
-        with open(group+'.csv', 'w') as csvfile:
+        with open(config.get('Config','output')+group+'.csv', 'w') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-            list_of_rows = table.special_group[group]
+            list_of_rows = table.session_group[group]
             for row in list_of_rows:
                 flattened_row = flatten(row)
                 writer.writerow(flattened_row)
