@@ -20,12 +20,10 @@ class SqlTable:
         index = 0
         for key in list_of_keys:
             try:
-                #print(key)
                 index = self.attributes.index(key)
-                #print(index)
                 self.list_of_key_indexes.append(index)
             except(Exception):
-                print("Exception in declare_list_of_keys of ", self.table_name)
+                print "Exception in declare_list_of_keys for ", self.table_name
                 return
         if len(list_of_keys) > 1:
             self.add_to_special_group = True
@@ -33,10 +31,9 @@ class SqlTable:
     def hash_list_of_key_indexes_to_key(self, row_values):
         hash_string = ""
         for i in range(len(self.list_of_key_indexes)):
-            #print(str(row_values[i]))
             index = self.list_of_key_indexes[i]
             hash_string += str(row_values[index])
-            #hash_string += "_"
+
 
         return hash_string
 
@@ -46,8 +43,6 @@ class SqlTable:
             self.table_rows[key+'__1'] = row_values
         else:
             self.table_rows[key] = row_values
-        #print("Added row key: ", key, "values: ", '|'.join(self.table_rows[key]))
-        #print("")
         self.num_rows += 1
 
         if self.add_to_special_group == True:
@@ -64,6 +59,6 @@ class SqlTable:
         try:
             row = self.table_rows[key]
         except(Exception):
-            print("get_row error: row not found, key=", key)
+            print "Exception get_row error: row not found, key=", key
 
         return row
