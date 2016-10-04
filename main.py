@@ -19,11 +19,11 @@ def unit_test(config):
 
     sessionlog_keys = config.get('Table1', 'keys').split(',')
     sessionlog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table1','path'),
-                                              sessionlog_keys, config.get('Table1','table_name'))
+                                              sessionlog_keys, config.get('Table1','table_name'),0)
 
     SqlLog_keys = config.get('Table2','keys').split(',')
     SqlLog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table2','path'),
-                                          SqlLog_keys, config.get('Table2','table_name'))
+                                          SqlLog_keys, config.get('Table2','table_name'),0)
 
     my_join_attr = config.get('Table1','my_join_attributes').split(',')
     other_join_attr = config.get('Table1','their_join_attributes').split(',')
@@ -31,7 +31,7 @@ def unit_test(config):
 
     SqlStatement_keys = config.get('Table3','keys').split(',')
     SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
-                                                SqlStatement_keys, config.get('Table3','table_name'))
+                                                SqlStatement_keys, config.get('Table3','table_name'),1)
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')

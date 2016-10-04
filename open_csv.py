@@ -111,7 +111,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys):
         new_sql_table.add_row(row)
 
 
-def open_csv_file(path, list_of_keys, csv_name):
+def open_csv_file(path, list_of_keys, csv_name, sqlstatement_flag):
     """
     Read a csv file in path, and store the contents of the csv file into a newly created SqlTable class object,
     where each row of the csv file is represented as a list of strings and stored by SqlTable.add_row(row)
@@ -122,7 +122,7 @@ def open_csv_file(path, list_of_keys, csv_name):
     table_name = csv_name.split('.')[0]
     new_sql_table = sql_table.SqlTable(table_name)
 
-    if new_sql_table.table_name == "sqlstatement":
+    if sqlstatement_flag:
         parseSqlStatement(new_sql_table, path, list_of_keys)
         return new_sql_table
 
