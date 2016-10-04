@@ -1,0 +1,2 @@
+inputDir=/ubc/cs/research/connections/data/SDSS/smallData
+outputDir=/ubc/cs/research/connections/data/SDSS/output

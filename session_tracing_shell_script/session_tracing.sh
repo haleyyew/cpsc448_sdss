@@ -1,11 +1,4 @@
 #####Background Info#################################################
-ssh haleyyew@whisky.cs.ubc.ca
-cd /ubc/cs/research/connections/data/SDSS/dataset
-
-scp report.pdf haleyyew@whisky.cs.ubc.ca:
-ls -ld /ubc/cs/research/connections/data/SDSS/code
-mv report.pdf /ubc/cs/research/connections/data/SDSS/code
-
 
 head -20 sessionlog.csv
 "
