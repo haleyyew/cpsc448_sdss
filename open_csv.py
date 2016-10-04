@@ -4,13 +4,14 @@ import sql_table
 import re
 
 def parseSqlStatement(new_sql_table, inputFile, list_of_keys):
-
+    """
+    This is the provided parser for sqlstatement.csv
+    """
     queryStatement = dict()
     j =0
     currLineNum = -1
     prevLineNum =-1
     prevLine=""
-
 
     with open(inputFile, 'rb') as f:
         for currLine in f:
@@ -91,7 +92,6 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys):
             prevLine = currLine
             prevLineNum = currLineNum
 
-
     matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
     if matchPrevLine:
         queryStatement[statementID][j] =matchPrevLine.group(1)
@@ -112,6 +112,10 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys):
 
 
 def open_csv_file(path, list_of_keys, csv_name):
+    """
+    Read a csv file in path, and store the contents of the csv file into a newly created SqlTable class object,
+    where each row of the csv file is represented as a list of strings and stored by SqlTable.add_row(row)
+    """
     counter = 0
     row_size = 0
 
@@ -125,6 +129,7 @@ def open_csv_file(path, list_of_keys, csv_name):
     with open(path, 'rt') as csv_file:
         file_reader = csv.reader(csv_file, delimiter=',')
         for row in file_reader:
+            # This first row in the csv file is always the header, which is the attribute names for each column
             if (counter == 0):
                 row_size = len(row)
                 counter += 1
@@ -134,15 +139,17 @@ def open_csv_file(path, list_of_keys, csv_name):
                 print "The number of attributes for table", new_sql_table.table_name, "is: ", row_size
                 print "The attributes of table", new_sql_table.table_name, "are: ", '|'.join(row)
 
+            # The second row always store redundant information
             elif (counter == 1):
                 counter += 1
 
+            # If the number of columns of this row is not equal to the number of columns in the header,
+            # then this is not a valid row
             elif (len(row) < row_size):
                 counter += 1
                 print "Exception in open_csv_file skipped row: ", '|'.join(row)
 
             else:
-                #print(row[0])
                 new_sql_table.add_row(row)
                 counter += 1
 
