@@ -8,7 +8,7 @@ import open_csv
 import table_join
 import pprint
 
-def unit_test(config):
+def unit_test(config, num_of_sessions):
     """
     Read sessionlog.csv, sqllog.csv, and sqlstatement.csv and store them in SqlTable class objects
     sessionlog_table, SqlLog_table, SqlStatement_table.
@@ -19,11 +19,11 @@ def unit_test(config):
 
     sessionlog_keys = config.get('Table1', 'keys').split(',')
     sessionlog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table1','path'),
-                                              sessionlog_keys, config.get('Table1','table_name'),0)
+                                              sessionlog_keys, config.get('Table1','table_name'),0,1,num_of_sessions)
 
     SqlLog_keys = config.get('Table2','keys').split(',')
     SqlLog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table2','path'),
-                                          SqlLog_keys, config.get('Table2','table_name'),0)
+                                          SqlLog_keys, config.get('Table2','table_name'),0,0,0)
 
     my_join_attr = config.get('Table1','my_join_attributes').split(',')
     other_join_attr = config.get('Table1','their_join_attributes').split(',')
@@ -31,7 +31,7 @@ def unit_test(config):
 
     SqlStatement_keys = config.get('Table3','keys').split(',')
     SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
-                                                SqlStatement_keys, config.get('Table3','table_name'),1)
+                                                SqlStatement_keys, config.get('Table3','table_name'),1,0,0)
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')
@@ -60,11 +60,10 @@ if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
     config.read('config.ini')
     num_of_sessions = int(config.get('Config','num_of_sessions'))
-    sessions_counter = 0
 
     # Read csv files and store contents of each csv into a SqlTable class object
     # Then join tables by joining contents of two SqlTable objects
-    table = unit_test(config)
+    table = unit_test(config, num_of_sessions)
 
     print "printing the joined table to csv"
     # Convert the hierarchical table attributes to a flat representation
@@ -73,9 +72,8 @@ if __name__ == '__main__':
 
     # Store the joined session table into csv files where each file stores log entries of a single session
     for group in table.session_group:
-        sessions_counter += 1
-        if sessions_counter > num_of_sessions:
-            break
+        print "output session:",group
+
         #pprint.pprint(table.special_group[group])
         with open(config.get('Config','output')+group+'.csv', 'w') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)

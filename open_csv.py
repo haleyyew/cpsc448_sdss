@@ -111,7 +111,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys):
         new_sql_table.add_row(row)
 
 
-def open_csv_file(path, list_of_keys, csv_name, sqlstatement_flag):
+def open_csv_file(path, list_of_keys, csv_name, sqlstatement_flag, sessions_flag, num_of_sessions):
     """
     Read a csv file in path, and store the contents of the csv file into a newly created SqlTable class object,
     where each row of the csv file is represented as a list of strings and stored by SqlTable.add_row(row)
@@ -152,5 +152,8 @@ def open_csv_file(path, list_of_keys, csv_name, sqlstatement_flag):
             else:
                 new_sql_table.add_row(row)
                 counter += 1
+                if sessions_flag and (len(new_sql_table.session_group) > num_of_sessions):
+                    new_sql_table.delete_session_group(row)
+                    break
 
     return new_sql_table

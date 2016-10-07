@@ -101,3 +101,10 @@ class SqlTable:
             print "Exception get_row error: row not found, key=", key
 
         return row
+
+    def delete_session_group(self, row):
+        key = row[self.list_of_key_indexes[0]]
+        # print "=======",key
+        # print key in self.session_group
+        print "delete_session_group", key, "no more sessions to add"
+        self.session_group.pop(key, None)
