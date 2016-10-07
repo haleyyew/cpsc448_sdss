@@ -35,9 +35,9 @@ def parse(session_tokens, filename):
 			stream.Close()
 			errors = ""
 			if parse_errors.Count :
-				errors = ( "The following errors were caught:\n ")
-				for err in parse_errors :
-					errors += ( err.Message, "\n " )
+				errors = "errors were caught for " + line.lower ()
+				# for err in parse_errors :
+				# 	errors +=  err.Message, "\n "
 
 			try :
 				for stmt in fragment.Batches[0].Statements :

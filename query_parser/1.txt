@@ -1,0 +1,1 @@
+SELECT TOP 100 objID, ra ,dec FROM PhotoPrimary WHERE ra > 185 and ra < 185.1 AND dec > 15 and dec < 15.1
