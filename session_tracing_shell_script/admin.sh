@@ -19,3 +19,9 @@ chmod a+x /ubc/cs/research/connections/data/SDSS/code/open_csv.py
 chmod a+x /ubc/cs/research/connections/data/SDSS/code/table_join.py
 
 mv -f hello.py /ubc/cs/research/connections/data/SDSS/code
+
+mv -f sessionlog.txt /ubc/cs/research/connections/data/SDSS/code
+mv -f sqllog.txt /ubc/cs/research/connections/data/SDSS/code
+mv -f sqlStatement.txt /ubc/cs/research/connections/data/SDSS/code
+
+chmod -R 0777

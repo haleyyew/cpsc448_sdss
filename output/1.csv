@@ -1,0 +1,3 @@
+sessionID,rankInSession,IpID,theTime,type,ID,templateID,sqlID,yy,mm,dd,hh,mi,ss,theTime,logID,clientIpID,requestor,server,dbname,access,elapsed,busy,rows,statementID,error,errorMessageID,isvisible,studyperiod,includeflag,statementID,statement,hits,TemplateID,studyperiod
+1,1,0,2003-02-09 20:02:15.000,1,99042076,0
+1,2,0,2003-02-09 20:02:15.000,1,99042077,0
