@@ -18,11 +18,19 @@ def unit_test(config, num_of_sessions):
 
     sessionlog_keys = config.get('Table1', 'keys').split(',')
     sessionlog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table1','path'),
-                                              sessionlog_keys, config.get('Table1','table_name'),0,1,num_of_sessions)
+                                              sessionlog_keys,
+                                              config.get('Table1','table_name'),
+                                              1,num_of_sessions,
+                                              0,0,
+                                              0,0)
 
     SqlLog_keys = config.get('Table2','keys').split(',')
     SqlLog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table2','path'),
-                                          SqlLog_keys, config.get('Table2','table_name'),0,0,0)
+                                          SqlLog_keys,
+                                          config.get('Table2','table_name'),
+                                          0,0,
+                                          1,sessionlog_table,
+                                          0,0)
 
     my_join_attr = config.get('Table1','my_join_attributes').split(',')
     other_join_attr = config.get('Table1','their_join_attributes').split(',')
@@ -30,7 +38,11 @@ def unit_test(config, num_of_sessions):
 
     SqlStatement_keys = config.get('Table3','keys').split(',')
     SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
-                                                SqlStatement_keys, config.get('Table3','table_name'),1,0,0)
+                                                SqlStatement_keys,
+                                                config.get('Table3','table_name'),
+                                                0,0,
+                                                0,0,
+                                                1,SqlLog_table)
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')

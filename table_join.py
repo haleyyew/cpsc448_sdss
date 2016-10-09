@@ -46,6 +46,7 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
     print "joining tables: ", self_sql_table.table_name, "and", other_sql_table.table_name , ":"
     print self_sql_table.attributes
 
+    counter = 0
     # Add a reference item in the row of self table to reference a row in other table given that the joining condition
     # is true.
     # For example, self table has attributes ['ID','date','flag'] and other table has attributes ['statement','sqlID'],
@@ -56,3 +57,6 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
         foreign_key = get_foreign_key(self_row_values, my_table_attributes_index)
         self_row_values.append("temp")
         self_row_values[-1] = other_sql_table.get_row(foreign_key)
+        counter += 1
+        if counter%200000 == 0:
+            print "I am finding a row in other_sql_table to join with row", counter, "in self_sql_table"

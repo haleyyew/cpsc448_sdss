@@ -25,3 +25,7 @@ mv -f sqllog.txt /ubc/cs/research/connections/data/SDSS/code
 mv -f sqlStatement.txt /ubc/cs/research/connections/data/SDSS/code
 
 chmod -R 0777
+
+screen -S mondaySession
+python ./main.py
+Control-a d
