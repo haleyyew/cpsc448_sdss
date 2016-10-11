@@ -3,41 +3,46 @@ import csv
 import sql_table
 import re
 import sys
+import time
+
+def measure_time(early):
+    later = time.time()
+    difference = int(later - early)
+    if difference > 60:
+        print "This program is taking too long,",difference,"per cycle"
+    return later
+
 
 def check_sqllog_row_and_add(row, sessionlog_SqlTable, new_sql_table):
-    counter = 0
-    for session_log in sessionlog_SqlTable.table_rows.keys():
-        session_log_row = sessionlog_SqlTable.table_rows[session_log]
-        if row[0] == session_log_row[-2]:
-            #print "adding row with ID", row[0], "== sqlID", session_log_row[-2]
-            new_sql_table.add_row(row)
-            break
-        counter +=1
-        if counter%100000 == 0:
-            print "I am now reading row #", counter
+    if row[0] in sessionlog_SqlTable.sqllog_group:
+        if int(row[0])%2 ==0:
+            print "adding row with ID", row[0], "== sqlID"
+        new_sql_table.add_row(row)
+
 
 def add_row_from_regex_match(new_sql_table,
                              statementID,queryStatement,hits,TemplateID,studyperiod,
                              sqllog_SqlTable):
     row = []
     row.append(statementID)
-    statement_string = ''.join(queryStatement[statementID][j].strip('\n')
-                for j in sorted(queryStatement[statementID].keys()))
-    row.append('"'+statement_string.strip('\r')+'"')
+    statement_string = ""
+    try:
+        statement_string = ' '.join(queryStatement[statementID][j].strip('\n').strip('\r')
+                                   #
+                    for j in sorted(queryStatement[statementID].keys()))
+    except (Exception):
+        if statementID %4==0:
+            print "Exception occurred in add_row_from_regex_match, statementID=",statementID
+    row.append(statement_string)
     row.append(hits)
     row.append(TemplateID)
     row.append(studyperiod)
 
-    counter = 0
-    for sql_log in sqllog_SqlTable.table_rows.keys():
-        sql_log_row = sqllog_SqlTable.table_rows[sql_log]
-        if str(row[0]) == str(sql_log_row[17]):
-            #print "adding row with statementID", row[0], "==", sql_log_row[17]
-            new_sql_table.add_row(row)
-            break
-        counter +=1
-        if counter%100000 == 0:
-            print "I am now reading row #", counter
+    if str(row[0]) in sqllog_SqlTable.sqlstatement_group:
+        if statementID %4==0:
+            print "adding row with statementID", row[0]
+            print row
+        new_sql_table.add_row(row)
 
 
 def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
@@ -50,9 +55,21 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
     prevLineNum =-1
     prevLine=""
 
+    statementID = 0
+    hits = 0
+    TemplateID = 0
+    studyperiod = 0
+
+    current_time = time.time()
+
     with open(inputFile, 'rb') as f:
         for currLine in f:
             currLineNum +=1
+
+            current_time = measure_time(current_time)
+
+            if currLineNum %200000==0:
+                print "I am still alive, reading currLineNum", currLineNum
 
             if currLineNum == 0:
                 match = re.search("(.+),(.+),(.+),(.+),(.+)", currLine)
@@ -74,34 +91,50 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
             matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
             if ( matchCurrLine and   matchPrevLine ) :
                 #wrap up previous statement
-                queryStatement[statementID][j] =matchPrevLine.group(1)
-                hits = int(matchPrevLine.group(2))
-                TemplateID = int(matchPrevLine.group(3))
-                studyperiod = int(matchPrevLine.group(4))
-
-                add_row_from_regex_match(new_sql_table,
+                try:
+                    queryStatement[statementID][j] =matchPrevLine.group(1)
+                    hits = int(matchPrevLine.group(2))
+                    TemplateID = int(matchPrevLine.group(3))
+                    studyperiod = int(matchPrevLine.group(4))
+                    add_row_from_regex_match(new_sql_table,
                                          statementID,queryStatement,hits,TemplateID,studyperiod,
                                          sqllog_SqlTable)
+                except (Exception):
+                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+
+                queryStatement = dict()
 
             elif matchCurrLine3:
-                statementID =  int(matchCurrLine3.group(1))
-                queryStatement[statementID][0] = matchCurrLine3.group(2)
-                hits = int(matchCurrLine3.group(3))
-                TemplateID = int(matchCurrLine3.group(4))
-                studyperiod = int(matchCurrLine3.group(5))
+                try:
+                    statementID =  int(matchCurrLine3.group(1))
+                    if statementID>68027572:
+                        statementID = -1
+                    queryStatement[statementID][0] = matchCurrLine3.group(2)
+                    hits = int(matchCurrLine3.group(3))
+                    TemplateID = int(matchCurrLine3.group(4))
+                    studyperiod = int(matchCurrLine3.group(5))
 
-                add_row_from_regex_match(new_sql_table,
+                    add_row_from_regex_match(new_sql_table,
                                          statementID,queryStatement,hits,TemplateID,studyperiod,
                                          sqllog_SqlTable)
+                except (Exception):
+                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+
+                queryStatement = dict()
 
             if matchCurrLine:
                 # start new statment
                 #print "matchCurrLine", currLine
-                statementID =  int(matchCurrLine.group(1))
-                queryStatement[statementID]= dict()
-                j = 0
-                queryStatement[statementID][j] = matchCurrLine.group(2)
-                j+=1
+                try:
+                    statementID =  int(matchCurrLine.group(1))
+                    if statementID>68027572:
+                        statementID = -1
+                    queryStatement[statementID]= dict()
+                    j = 0
+                    queryStatement[statementID][j] = matchCurrLine.group(2)
+                    j+=1
+                except (Exception):
+                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
 
             elif matchCurrLine2:
                 #skip this current line
@@ -109,22 +142,31 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
 
             elif currLineNum !=0 and currLineNum !=1:
                 #print "just adding", currLine
-                queryStatement[statementID][j] = currLine
-                j+=1
+                try:
+                    queryStatement[statementID][j] = currLine
+                    j+=1
+                except (Exception):
+                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
 
             prevLine = currLine
             prevLineNum = currLineNum
 
     matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
     if matchPrevLine:
-        queryStatement[statementID][j] =matchPrevLine.group(1)
-        hits = int(matchPrevLine.group(2))
-        TemplateID = int(matchPrevLine.group(3))
-        studyperiod = int(matchPrevLine.group(4))
-
-        add_row_from_regex_match(new_sql_table,
+        try:
+            queryStatement[statementID][j] =matchPrevLine.group(1)
+            hits = int(matchPrevLine.group(2))
+            TemplateID = int(matchPrevLine.group(3))
+            studyperiod = int(matchPrevLine.group(4))
+            add_row_from_regex_match(new_sql_table,
                                  statementID,queryStatement,hits,TemplateID,studyperiod,
                                  sqllog_SqlTable)
+
+        except (Exception):
+            print "Exception in parseSqlStatement, currLineNum=", currLineNum
+        queryStatement = dict()
+
+    print "I have finished reading sqlstatement.csv"
 
 
 def open_csv_file(path, list_of_keys, csv_name,
@@ -143,6 +185,7 @@ def open_csv_file(path, list_of_keys, csv_name,
 
     if sqlstatement_flag:
         parseSqlStatement(new_sql_table, path, list_of_keys, sqllog_SqlTable)
+        sqllog_SqlTable.sqlstatement_group = {}
         return new_sql_table
 
     with open(path, 'rt') as csv_file:
@@ -187,5 +230,8 @@ def open_csv_file(path, list_of_keys, csv_name,
                 if sessions_flag and (len(new_sql_table.session_group) > num_of_sessions):
                     new_sql_table.delete_session_group(row)
                     break
+
+    if sqllog_flag:
+        sessionlog_SqlTable.sqllog_group = {}
 
     return new_sql_table

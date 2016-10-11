@@ -1,5 +1,6 @@
 ssh haleyyew@whisky.cs.ubc.ca
 cd /ubc/cs/research/connections/data/SDSS/dataset
+cd /ubc/cs/research/connections/data/SDSS/code
 
 scp report.pdf haleyyew@whisky.cs.ubc.ca:
 mv report.pdf /ubc/cs/research/connections/data/SDSS/code
@@ -26,6 +27,13 @@ mv -f sqlStatement.txt /ubc/cs/research/connections/data/SDSS/code
 
 chmod -R 0777
 
-screen -S mondaySession
-python ./main.py
+screen -S sundaySession
+python ./main.py > log.txt
 Control-a d
+screen -r sundaySession
+
+top -u haleyyew
+
+cp -a /ubc/cs/research/connections/data/SDSS/code/output/. /ubc/cs/home/h/haleyyew/
+
+stat 1.csv

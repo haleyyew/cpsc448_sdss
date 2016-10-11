@@ -27,6 +27,10 @@ class SqlTable:
         self.list_of_key_indexes = []
         self.add_to_session_group = False
         self.session_group = {}
+        self.add_to_sqllog_group = False
+        self.sqllog_group = {}
+        self.add_to_sqlstatement_group = False
+        self.sqlstatement_group = {}
 
     def declare_table_attributes(self, attributes):
         self.attributes = attributes[:]
@@ -52,6 +56,9 @@ class SqlTable:
         # add_to_session_group is set to True only when we are dealing with the sessionlog table
         if self.table_name == 'sessionlog':
             self.add_to_session_group = True
+            self.add_to_sqllog_group = True
+        if self.table_name == 'sqllog':
+            self.add_to_sqlstatement_group = True
 
     def hash_list_of_key_indexes_to_key(self, row_values):
         """
@@ -92,6 +99,14 @@ class SqlTable:
                 group = []
                 group.append(self.table_rows[key])
                 self.session_group[group_key] = group
+
+        if self.add_to_sqllog_group == True:
+            key_sqlID = row_values[-2]
+            self.sqllog_group[str(key_sqlID)] = 1
+        if self.add_to_sqlstatement_group == True:
+            key_statementID = row_values[17]
+            self.sqlstatement_group[str(key_statementID)] = 1
+
 
     def get_row(self, key):
         row = []

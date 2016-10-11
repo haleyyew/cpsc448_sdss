@@ -60,3 +60,5 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
         counter += 1
         if counter%200000 == 0:
             print "I am finding a row in other_sql_table to join with row", counter, "in self_sql_table"
+        if (foreign_key !="") and (counter%1000==0):
+            print self_row_values
