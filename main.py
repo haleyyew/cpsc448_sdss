@@ -6,6 +6,8 @@ __author__ = 'HY'
 import open_csv
 import table_join
 import pprint
+import time
+
 
 def unit_test(config, num_of_sessions):
     """
@@ -67,6 +69,8 @@ def flatten(l):
 
 if __name__ == '__main__':
 
+    start = time.time()
+
     # Read the configuration file
     config = ConfigParser.ConfigParser()
     config.read('config.ini')
@@ -95,5 +99,6 @@ if __name__ == '__main__':
                 flattened_row = flatten(row)
                 writer.writerow(flattened_row)
 
+    end = time.time()
 
-
+    print "program took", (end-start)/60, "minutes"
