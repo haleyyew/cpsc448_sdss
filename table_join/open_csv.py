@@ -10,6 +10,8 @@ print_info = 2000000
 max_sql_statement_rows = 68027572
 print_info_small = 100
 print_info_medium = 200000
+print_info_tiny = 5
+print_info_pico = 1
 
 def measure_time(early):
     later = time.time()
@@ -18,13 +20,17 @@ def measure_time(early):
         print "This program is taking too long,",difference,"per loop iteration"
     return later
 
-def debug(num_rows):
-    if num_rows>print_info_small:
-        response = raw_input("Stop?")
-        if response =="y":
-            return True
-        else:
-            return False
+def debug(num_rows, stop_after_few_rows):
+    # if stop_after_few_rows:
+    #     if num_rows>print_info_tiny:
+    #         return True
+    # if num_rows>print_info_small:
+    #     # response = raw_input("Stop?")
+    #     # if response =="y":
+    #         return True
+    #     # else:
+    #     #     return False
+    return False
 
 def print_exception(source, element_name, element, line_number):
     if line_number%print_info_medium == 0:
@@ -99,7 +105,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                 print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
                 print "I have added", new_sql_table.num_rows, "rows"
 
-                debug_stat = debug(new_sql_table.num_rows)
+                debug_stat = debug(new_sql_table.num_rows, True)
                 if debug_stat:
                     return new_sql_table
 
@@ -125,7 +131,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
             if ( matchCurrLine and   matchPrevLine ) :
                 #wrap up previous statement
                 try:
-                    queryStatement.append(matchPrevLine.group(1).strip('\n'))
+                    queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
                     hits = int(matchPrevLine.group(2))
                     TemplateID = int(matchPrevLine.group(3))
                     studyperiod = int(matchPrevLine.group(4))
@@ -142,7 +148,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                     statementID =  int(matchCurrLine3.group(1))
                     if statementID>max_sql_statement_rows:
                         statementID = -1
-                    queryStatement.append(matchCurrLine3.group(2).strip('\n'))
+                    queryStatement.append(matchCurrLine3.group(2).strip('\n').strip('\r'))
                     hits = int(matchCurrLine3.group(3))
                     TemplateID = int(matchCurrLine3.group(4))
                     studyperiod = int(matchCurrLine3.group(5))
@@ -165,7 +171,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                         statementID = -1
                     queryStatement= []
                     j = 0
-                    queryStatement.append(matchCurrLine.group(2).strip('\n'))
+                    queryStatement.append(matchCurrLine.group(2).strip('\n').strip('\r'))
                     j+=1
                 except (Exception):
                     print_exception("parseSqlStatement(matchCurrLine)", "currLineNum", currLineNum, currLineNum)
@@ -177,7 +183,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
             elif currLineNum !=0 and currLineNum !=1:
                 #print "just adding", currLine
                 try:
-                    queryStatement.append(currLine.strip('\n'))
+                    queryStatement.append(currLine.strip('\n').strip('\r'))
                     j+=1
                 except (Exception):
                     print_exception("parseSqlStatement(currLineNum !=0 and currLineNum !=1)", "currLineNum", currLineNum, currLineNum)
@@ -188,7 +194,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
     matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
     if matchPrevLine:
         try:
-            queryStatement.append(matchPrevLine.group(1).strip('\n'))
+            queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
             hits = int(matchPrevLine.group(2))
             TemplateID = int(matchPrevLine.group(3))
             studyperiod = int(matchPrevLine.group(4))
@@ -258,7 +264,7 @@ def open_csv_file(path, list_of_keys, csv_name,
                     if sessions_flag:
                         print "I have added", len(new_sql_table.session_group) ,"sessions"
 
-                    debug_stat = debug(new_sql_table.num_rows)
+                    debug_stat = debug(new_sql_table.num_rows, False)
                     if debug_stat:
                         return new_sql_table
 

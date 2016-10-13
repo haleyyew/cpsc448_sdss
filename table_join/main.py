@@ -68,42 +68,7 @@ def flatten(l):
             sub_list.append(el)
     return sub_list
 
-if __name__ == '__main__':
-
-    start = time.time()
-
-    # Read the configuration file
-    config = ConfigParser.ConfigParser()
-    config.read('config.ini')
-    num_of_sessions = int(config.get('Config','num_of_sessions'))
-
-    # Read csv files and store contents of each csv into a SqlTable class object
-    # Then join tables by joining contents of two SqlTable objects
-    table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
-
-    print "printing the joined table to csv"
-    # Convert the hierarchical table attributes to a flat representation
-    #flattened_attributes = flatten(table.attributes)
-    #print flattened_attributes
-
-    # Store the joined session table into csv files where each file stores log entries of a single session
-    for group in table.session_group:
-        print "output session:",group
-
-        #pprint.pprint(table.special_group[group])
-        with open(config.get('Config','output')+group+'.csv', 'w') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-            list_of_rows = table.session_group[group]
-
-            writer.writerow(table.attributes)
-            for row in list_of_rows:
-                #flattened_row = flatten(row)
-                writer.writerow(row)
-
-    end = time.time()
-
-    print "program took", (end-start)/60, "minutes"
-
+def debug():
     while (1):
         response = raw_input("Please enter command: ")
         split_command = response.split()
@@ -136,9 +101,48 @@ if __name__ == '__main__':
                     for row in SqlStatement_table.table_rows:
                         print SqlStatement_table.table_rows[row]
 
-
             except Exception:
                 print Exception
                 continue
+
+if __name__ == '__main__':
+
+    start = time.time()
+
+    # Read the configuration file
+    config = ConfigParser.ConfigParser()
+    config.read('config.ini')
+    num_of_sessions = int(config.get('Config','num_of_sessions'))
+
+    # Read csv files and store contents of each csv into a SqlTable class object
+    # Then join tables by joining contents of two SqlTable objects
+    table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
+
+    debug()
+
+    print "printing the joined table to csv"
+    # Convert the hierarchical table attributes to a flat representation
+    #flattened_attributes = flatten(table.attributes)
+    #print flattened_attributes
+
+    # Store the joined session table into csv files where each file stores log entries of a single session
+    for group in table.session_group:
+        print "output session:",group
+
+        #pprint.pprint(table.special_group[group])
+        with open(config.get('Config','output')+group+'.csv', 'w') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            list_of_rows = table.session_group[group]
+
+            writer.writerow(table.attributes)
+            for row in list_of_rows:
+                #flattened_row = flatten(row)
+                writer.writerow(row)
+
+    end = time.time()
+
+    print "program took", (end-start)/60, "minutes"
+
+
 
 

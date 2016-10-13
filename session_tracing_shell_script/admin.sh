@@ -42,3 +42,5 @@ mv  -v /ubc/cs/home/h/haleyyew/query_parser/* /ubc/cs/research/connections/data/
 
 mv  -v -f /ubc/cs/home/h/haleyyew/table_join/* /ubc/cs/research/connections/data/SDSS/code/table_join
 cd /ubc/cs/research/connections/data/SDSS/code/table_join
+screen -S haoran_3
+python ./main.py 
