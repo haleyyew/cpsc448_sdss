@@ -1,7 +1,8 @@
 __author__ = 'Haoran Yu'
-import query_parser
+# import query_parser
 import csv
 import ConfigParser
+import re
 
 class SessionTokens:
     def __init__(self, session_number):
@@ -46,6 +47,45 @@ class SessionTokens:
         for token in list_of_tokens:
             session_tokens.add_token(token_group, token)
 
+def regex_match(line):
+    # select_from = re.search('^select(.*)from', line)
+    # from_where = re.search('^from(.*)where', line)
+    # from_orderby = re.search('^from(.*)order by', line)
+    # from_groupby = re.search('^from(.*)group by', line)
+    # where_groupby = re.search('^where(.*)group by', line)
+    # where_orderby = re.search('^where(.*)order by', line)
+    # groupby_orderby = re.search('^group by(.*)order by', line)
+    # from_select = re.search('^from(.*)select', line)
+    # where_select = re.search('^where(.*)select', line)
+    # groupby_select = re.search('^group by(.*)select', line)
+    #
+    # list_of_matches = [select_from,from_where,from_orderby,from_groupby,where_groupby,
+    #                    where_orderby,groupby_orderby,from_select,where_select,groupby_select]
+
+    words = line.split()
+    words_len = len(words)
+    partition = []
+    for i in range(words_len,-1,-1):
+        if words[i] in partition:
+            return
+
+
+    return
+
+
+def parse_simple(session_tokens, filename):
+
+    match = ""
+
+    with open( filename ) as f :
+        for line in f :
+            line = line.lower()
+            list_of_matches = regex_match(line)
+
+            for match in list_of_matches:
+                return
+
+
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
     config.read('config.ini')
@@ -55,7 +95,7 @@ if __name__ == '__main__':
     all_session_items = []
     for session in list_of_session:
         session_tokens = SessionTokens(int(session))
-        query_parser.parse(session_tokens, session+'.txt')
+        parse_simple(session_tokens, session+'.txt')
         session_tokens.print_all_tokens()
         all_session_items.append(session_tokens)
 
@@ -76,6 +116,7 @@ if __name__ == '__main__':
                 for item in prev_session_items:
                     if item not in session_items:
                         session.all_tokens[item] = 0
+
     with open(config.get('Config','outputDir')+'user_item_matrix'+'.csv', 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
         session = all_session_items[-1]
