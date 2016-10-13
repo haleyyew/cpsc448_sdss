@@ -41,13 +41,29 @@ class SessionTokens:
                 print token," = ",tokens_group_dict[token]
                 self.all_tokens[group+'_'+token] = tokens_group_dict[token]
 
-    def split_string_and_store(self, token_group,str):
-        list_of_tokens = str.split()
+    def split_string_and_store(self, token_group,list_of_tokens):
+        #list_of_tokens = str.split()
         #print list_of_tokens
         for token in list_of_tokens:
             session_tokens.add_token(token_group, token)
 
-def regex_match(line):
+
+def clear_dictionary(partitions):
+    keys = ['select' , 'from' , 'where' , 'orderby' ,'groupby' ]
+    for key in keys:
+        partitions[key] = []
+    return partitions
+
+def add_to_partition(word,partitions,last_partition):
+    if word in partitions:
+        last_partition = word
+        return last_partition
+    else:
+        partitions[last_partition].append(word)
+        return last_partition
+
+
+def process_line(line, partitions):
     # select_from = re.search('^select(.*)from', line)
     # from_where = re.search('^from(.*)where', line)
     # from_orderby = re.search('^from(.*)order by', line)
@@ -63,27 +79,28 @@ def regex_match(line):
     #                    where_orderby,groupby_orderby,from_select,where_select,groupby_select]
 
     words = line.split()
-    words_len = len(words)
-    partition = []
-    for i in range(words_len,-1,-1):
-        if words[i] in partition:
-            return
+    last_partition = "select"
 
+    for word in words:
+        last_partition = add_to_partition(word,partitions,last_partition)
 
-    return
+    return partitions
 
 
 def parse_simple(session_tokens, filename):
 
     match = ""
+    partitions = {}
+    clear_dictionary(partitions)
 
     with open( filename ) as f :
         for line in f :
             line = line.lower()
-            list_of_matches = regex_match(line)
+            partitions = process_line(line,partitions)
 
-            for match in list_of_matches:
-                return
+            for key in partitions:
+                session_tokens.split_string_and_store(key,partitions[key])
+            clear_dictionary(partitions)
 
 
 if __name__ == '__main__':
