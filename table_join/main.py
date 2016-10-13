@@ -3,9 +3,8 @@ import ConfigParser
 
 __author__ = 'HY'
 
-import open_csv
 import table_join
-import pprint
+import open_csv
 import time
 
 
@@ -102,3 +101,23 @@ if __name__ == '__main__':
     end = time.time()
 
     print "program took", (end-start)/60, "minutes"
+
+    while (1):
+        response = raw_input("Please enter command: ")
+        split_command = response.split()
+        #print split_command
+        if response == "close":
+            break
+
+        else:
+            try:
+                session = split_command[0]
+                rank = int(split_command[1]) -1
+                print "len(table.session_group[session]) =",len(table.session_group[session])
+                print table.session_group[session][rank]
+
+            except Exception:
+                print Exception
+                continue
+
+

@@ -80,8 +80,16 @@ def process_line(line, partitions):
 
     words = line.split()
     last_partition = "select"
+    joint_keyword = ""
 
     for word in words:
+        if (word == "group") or (word == "order"):
+            joint_keyword = word
+            continue
+        elif (word == "by") and (joint_keyword != ""):
+            word = joint_keyword + word
+            joint_keyword = ""
+
         last_partition = add_to_partition(word,partitions,last_partition)
 
     return partitions

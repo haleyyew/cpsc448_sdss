@@ -1,9 +1,10 @@
 __author__ = 'HY'
 import csv
-import sql_table
 import re
 import sys
 import time
+
+import sql_table
 
 print_info = 200000
 max_sql_statement_rows = 68027572

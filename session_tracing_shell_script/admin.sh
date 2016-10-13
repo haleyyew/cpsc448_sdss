@@ -37,3 +37,7 @@ top -u haleyyew
 cp -a /ubc/cs/research/connections/data/SDSS/code/output/. /ubc/cs/home/h/haleyyew/
 
 stat 1.csv
+
+mv  -v /ubc/cs/home/h/haleyyew/query_parser/* /ubc/cs/research/connections/data/SDSS/code/query_parser
+
+mv  -v -f /ubc/cs/home/h/haleyyew/table_join/* /ubc/cs/research/connections/data/SDSS/code/table_join
