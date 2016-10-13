@@ -13,7 +13,7 @@ def measure_time(early):
     later = time.time()
     difference = int(later - early)
     if difference > 60:
-        print "This program is taking too long,",difference,"per cycle"
+        print "This program is taking too long,",difference,"per loop iteration"
     return later
 
 

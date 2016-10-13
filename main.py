@@ -34,10 +34,6 @@ def unit_test(config, num_of_sessions):
                                           1,sessionlog_table,
                                           0,0)
 
-    my_join_attr = config.get('Table1','my_join_attributes').split(',')
-    other_join_attr = config.get('Table1','their_join_attributes').split(',')
-    table_join.table_join(sessionlog_table,my_join_attr,SqlLog_table,other_join_attr)
-
     SqlStatement_keys = config.get('Table3','keys').split(',')
     SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
                                                 SqlStatement_keys,
@@ -49,6 +45,10 @@ def unit_test(config, num_of_sessions):
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')
     table_join.table_join(SqlLog_table,my_join_attr,SqlStatement_table,other_join_attr)
+
+    my_join_attr = config.get('Table1','my_join_attributes').split(',')
+    other_join_attr = config.get('Table1','their_join_attributes').split(',')
+    table_join.table_join(sessionlog_table,my_join_attr,SqlLog_table,other_join_attr)
 
     return sessionlog_table
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     print "printing the joined table to csv"
     # Convert the hierarchical table attributes to a flat representation
-    flattened_attributes = flatten(table.attributes)
+    #flattened_attributes = flatten(table.attributes)
     #print flattened_attributes
 
     # Store the joined session table into csv files where each file stores log entries of a single session
@@ -94,10 +94,10 @@ if __name__ == '__main__':
             writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
             list_of_rows = table.session_group[group]
 
-            writer.writerow(flattened_attributes)
+            writer.writerow(table.attributes)
             for row in list_of_rows:
-                flattened_row = flatten(row)
-                writer.writerow(flattened_row)
+                #flattened_row = flatten(row)
+                writer.writerow(row)
 
     end = time.time()
 

@@ -42,7 +42,7 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
     # in other table.
     # For example, self table has attributes ['ID','date','flag'] and other table has attributes ['statement','sqlID'],
     # then the new attributes becomes ['ID','date','flag', ['statement','sqlID']]
-    self_sql_table.attributes.append(other_sql_table.attributes)
+    self_sql_table.attributes.extend(other_sql_table.attributes)
     print "joining tables: ", self_sql_table.table_name, "and", other_sql_table.table_name , ":"
     print self_sql_table.attributes
 
@@ -55,8 +55,7 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
     for self_row in self_sql_table.table_rows:
         self_row_values = self_sql_table.table_rows[self_row]
         foreign_key = get_foreign_key(self_row_values, my_table_attributes_index)
-        self_row_values.append("temp")
-        self_row_values[-1] = other_sql_table.get_row(foreign_key)
+        self_row_values.extend(other_sql_table.get_row(foreign_key))
         counter += 1
         if counter%200000 == 0:
             print "I am finding a row in other_sql_table to join with row", counter, "in self_sql_table"
