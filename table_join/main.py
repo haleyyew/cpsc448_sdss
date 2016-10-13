@@ -43,13 +43,15 @@ def unit_test(config, num_of_sessions):
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')
-    table_join.table_join(SqlLog_table,my_join_attr,SqlStatement_table,other_join_attr)
+    table_join.table_join(SqlLog_table,my_join_attr,
+                          SqlStatement_table,other_join_attr)
 
     my_join_attr = config.get('Table1','my_join_attributes').split(',')
     other_join_attr = config.get('Table1','their_join_attributes').split(',')
-    table_join.table_join(sessionlog_table,my_join_attr,SqlLog_table,other_join_attr)
+    table_join.table_join(sessionlog_table,my_join_attr,
+                          SqlLog_table,other_join_attr)
 
-    return sessionlog_table
+    return (sessionlog_table,SqlLog_table,SqlStatement_table)
 
 def flatten(l):
     """
@@ -77,7 +79,7 @@ if __name__ == '__main__':
 
     # Read csv files and store contents of each csv into a SqlTable class object
     # Then join tables by joining contents of two SqlTable objects
-    table = unit_test(config, num_of_sessions)
+    table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
 
     print "printing the joined table to csv"
     # Convert the hierarchical table attributes to a flat representation
@@ -111,10 +113,29 @@ if __name__ == '__main__':
 
         else:
             try:
-                session = split_command[0]
-                rank = int(split_command[1]) -1
-                print "len(table.session_group[session]) =",len(table.session_group[session])
-                print table.session_group[session][rank]
+                table_name = split_command[0]
+                if table_name=="session":
+                    session = split_command[1]
+                    rank = int(split_command[2]) -1
+                    print "len(table.session_group[session]) =",len(table.session_group[session])
+                    print table.session_group[session][rank]
+                elif table_name=="sql":
+                    sqlID = split_command[1]
+                    print SqlLog_table.get_row(sqlID)
+                elif table_name=="statement":
+                    statementID = split_command[1]
+                    print SqlStatement_table.get_row(statementID)
+                elif table_name=="debug":
+                    print "=====sessionlog====="
+                    for row in table.table_rows:
+                        print table.table_rows[row]
+                    print "=====sqllog====="
+                    for row in SqlLog_table.table_rows:
+                        print SqlLog_table.table_rows[row]
+                    print"=====sqlstatement====="
+                    for row in SqlStatement_table.table_rows:
+                        print SqlStatement_table.table_rows[row]
+
 
             except Exception:
                 print Exception

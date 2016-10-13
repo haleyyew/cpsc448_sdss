@@ -6,9 +6,9 @@ import time
 
 import sql_table
 
-print_info = 200000
+print_info = 2000000
 max_sql_statement_rows = 68027572
-print_info_small = 100
+print_info_small = 10
 
 def measure_time(early):
     later = time.time()

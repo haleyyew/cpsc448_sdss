@@ -1,5 +1,8 @@
 __author__ = 'HY'
 
+print_info = 200000
+print_info_small = 1000
+
 def get_foreign_key(table_row, join_attributes_index):
     """
     Helper function for table_join() to retrieve the foreign key for a row in the table.
@@ -57,7 +60,7 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
         foreign_key = get_foreign_key(self_row_values, my_table_attributes_index)
         self_row_values.extend(other_sql_table.get_row(foreign_key))
         counter += 1
-        if counter%200000 == 0:
+        if counter%print_info == 0:
             print "I am finding a row in other_sql_table to join with row", counter, "in self_sql_table"
-        if (foreign_key !="") and (counter%1000==0):
+        if (foreign_key !="") and (counter%print_info_small==0):
             print self_row_values
