@@ -8,7 +8,8 @@ import sql_table
 
 print_info = 2000000
 max_sql_statement_rows = 68027572
-print_info_small = 10
+print_info_small = 100
+print_info_medium = 1000
 
 def measure_time(early):
     later = time.time()
@@ -16,6 +17,19 @@ def measure_time(early):
     if difference > 60:
         print "This program is taking too long,",difference,"per loop iteration"
     return later
+
+def debug(num_rows):
+    if num_rows%print_info_small:
+        response = raw_input("Stop?")
+        if response =="y":
+            return True
+        else:
+            return False
+
+def print_exception(source, element_name, element, line_number):
+    if line_number%print_info_medium == 0:
+        print "Exception occurred in",source,",element_name",element_name,"=",element
+
 
 
 def check_sqllog_row_and_add(row, sessionlog_SqlTable, new_sql_table):
@@ -36,18 +50,20 @@ def add_row_from_regex_match(new_sql_table,
         for string in queryStatement:
             statement_string +=string
     except (Exception):
-        if statementID %print_info_small==0:
-            print "Exception occurred in add_row_from_regex_match, statementID=",statementID
+        print_exception("add_row_from_regex_match", "statementID", statementID, statementID)
+
     row.append(statement_string)
     row.append(hits)
     row.append(TemplateID)
     row.append(studyperiod)
+
 
     if str(row[0]) in sqllog_SqlTable.sqlstatement_group:
         if statementID %print_info_small==0:
             print "adding row with statementID", row[0],
             print row
         new_sql_table.add_row(row)
+
 
 
 def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
@@ -81,6 +97,11 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
             if currLineNum %print_info==0:
                 print "I am still alive, reading currLineNum", currLineNum
 
+                debug_stat = debug(new_sql_table.num_rows)
+                if debug_stat:
+                    return
+
+
             if currLineNum == 0:
                 match = re.search("(.+),(.+),(.+),(.+),(.+)", currLine)
                 row = []
@@ -110,7 +131,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                                          statementID,queryStatement,hits,TemplateID,studyperiod,
                                          sqllog_SqlTable)
                 except (Exception):
-                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+                    print_exception("parseSqlStatement(matchCurrLine and matchPrevLine)", "currLineNum", currLineNum, currLineNum)
 
                 queryStatement = []
 
@@ -128,7 +149,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                                          statementID,queryStatement,hits,TemplateID,studyperiod,
                                          sqllog_SqlTable)
                 except (Exception):
-                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+                    print_exception("parseSqlStatement(matchCurrLine3)", "currLineNum", currLineNum, currLineNum)
 
                 queryStatement = []
 
@@ -144,7 +165,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                     queryStatement.append(matchCurrLine.group(2).strip('\n'))
                     j+=1
                 except (Exception):
-                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+                    print_exception("parseSqlStatement(matchCurrLine)", "currLineNum", currLineNum, currLineNum)
 
             elif matchCurrLine2:
                 #skip this current line
@@ -156,7 +177,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                     queryStatement.append(currLine.strip('\n'))
                     j+=1
                 except (Exception):
-                    print "Exception in parseSqlStatement, currLineNum=", currLineNum
+                    print_exception("parseSqlStatement(currLineNum !=0 and currLineNum !=1)", "currLineNum", currLineNum, currLineNum)
 
             prevLine = currLine
             prevLineNum = currLineNum
@@ -173,9 +194,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                                  sqllog_SqlTable)
 
         except (Exception):
-            print "Exception in parseSqlStatement, currLineNum=", currLineNum
-        queryStatement = []
-
+            print_exception("parseSqlStatement", "currLineNum", currLineNum, currLineNum)
     print "I have finished reading sqlstatement.csv"
 
 
@@ -235,6 +254,11 @@ def open_csv_file(path, list_of_keys, csv_name,
                     print "I have added", new_sql_table.num_rows, "rows"
                     if sessions_flag:
                         print "I have added", len(new_sql_table.session_group) ,"sessions"
+
+                    debug_stat = debug(new_sql_table.num_rows)
+                    if debug_stat:
+                        return
+
 
                 # I am only reading num_of_sessions sequentially, I will not store any more sessions after this
                 if sessions_flag and (len(new_sql_table.session_group) > num_of_sessions):

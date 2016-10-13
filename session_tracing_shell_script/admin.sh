@@ -27,10 +27,10 @@ mv -f sqlStatement.txt /ubc/cs/research/connections/data/SDSS/code
 
 chmod -R 0777
 
-screen -S sundaySession
-python ./main.py > log.txt
+screen -S haoran_3
+python ./main.py 
 Control-a d
-screen -r sundaySession
+screen -r haoran_3
 
 top -u haleyyew
 
