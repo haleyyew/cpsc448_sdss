@@ -9,7 +9,7 @@ import sql_table
 print_info = 2000000
 max_sql_statement_rows = 68027572
 print_info_small = 100
-print_info_medium = 1000
+print_info_medium = 200000
 
 def measure_time(early):
     later = time.time()
@@ -19,7 +19,7 @@ def measure_time(early):
     return later
 
 def debug(num_rows):
-    if num_rows%print_info_small:
+    if num_rows>print_info_small:
         response = raw_input("Stop?")
         if response =="y":
             return True
@@ -96,10 +96,12 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
 
             if currLineNum %print_info==0:
                 print "I am still alive, reading currLineNum", currLineNum
+                print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
+                print "I have added", new_sql_table.num_rows, "rows"
 
                 debug_stat = debug(new_sql_table.num_rows)
                 if debug_stat:
-                    return
+                    return new_sql_table
 
 
             if currLineNum == 0:
@@ -159,6 +161,7 @@ def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
                 try:
                     statementID =  int(matchCurrLine.group(1))
                     if statementID>max_sql_statement_rows:
+                        print_exception("parseSqlStatement(statementID>max_sql_statement_rows)", "statementID", statementID, statementID)
                         statementID = -1
                     queryStatement= []
                     j = 0
@@ -257,7 +260,7 @@ def open_csv_file(path, list_of_keys, csv_name,
 
                     debug_stat = debug(new_sql_table.num_rows)
                     if debug_stat:
-                        return
+                        return new_sql_table
 
 
                 # I am only reading num_of_sessions sequentially, I will not store any more sessions after this
