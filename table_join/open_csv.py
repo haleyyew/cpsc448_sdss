@@ -21,16 +21,16 @@ def measure_time(early):
     return later
 
 def debug(num_rows, stop_after_few_rows):
-    # if stop_after_few_rows:
-    #     if num_rows>print_info_tiny:
-    #         return True
-    # if num_rows>print_info_small:
-    #     # response = raw_input("Stop?")
-    #     # if response =="y":
-    #         return True
-    #     # else:
-    #     #     return False
-    return False
+    if stop_after_few_rows:
+        if num_rows>print_info_tiny:
+            return True
+    if num_rows>print_info_small:
+        # response = raw_input("Stop?")
+        # if response =="y":
+            return True
+        # else:
+        #     return False
+    # return False
 
 def print_exception(source, element_name, element, line_number):
     if line_number%print_info_medium == 0:

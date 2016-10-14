@@ -1,11 +1,30 @@
 import csv
 import ConfigParser
+import signal
 
 __author__ = 'HY'
 
 import table_join
 import open_csv
 import time
+
+import sys
+
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("logfile.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass
+
 
 
 def unit_test(config, num_of_sessions):
@@ -70,7 +89,10 @@ def flatten(l):
 
 def debug():
     while (1):
-        response = raw_input("Please enter command: ")
+        try:
+            response = raw_input("Please enter command: ")
+        except Exception:
+            continue
         split_command = response.split()
         #print split_command
         if response == "close":
@@ -107,6 +129,7 @@ def debug():
 
 if __name__ == '__main__':
 
+    sys.stdout = Logger()
     start = time.time()
 
     # Read the configuration file
@@ -117,6 +140,8 @@ if __name__ == '__main__':
     # Read csv files and store contents of each csv into a SqlTable class object
     # Then join tables by joining contents of two SqlTable objects
     table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
+
+    s = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     debug()
 
@@ -143,6 +168,6 @@ if __name__ == '__main__':
 
     print "program took", (end-start)/60, "minutes"
 
-
+    signal.signal(signal.SIGINT, s)
 
 
