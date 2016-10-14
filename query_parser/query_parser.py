@@ -1,3 +1,5 @@
+import os
+
 __author__ = 'Haoran Yu'
 # import query_parser
 import csv
@@ -113,14 +115,16 @@ def parse_simple(session_tokens, filename):
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
-    config.read('config.ini')
-    sessions = config.get('Config','sessions')
-    list_of_session = sessions.split(',')
+    config.read('../table_join/config.ini')
+    sessions_dir = config.get('Parser','inputDir')
+
+    list_of_session = os.listdir(sessions_dir)
 
     all_session_items = []
     for session in list_of_session:
+        session = session.split(".")[0]
         session_tokens = SessionTokens(int(session))
-        parse_simple(session_tokens, session+'.txt')
+        parse_simple(session_tokens, sessions_dir+session+'.csv')
         session_tokens.print_all_tokens()
         all_session_items.append(session_tokens)
 
@@ -142,7 +146,7 @@ if __name__ == '__main__':
                     if item not in session_items:
                         session.all_tokens[item] = 0
 
-    with open(config.get('Config','outputDir')+'user_item_matrix'+'.csv', 'w') as csvfile:
+    with open(config.get('Parser','outputDir')+'user_item_matrix'+'.csv', 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
         session = all_session_items[-1]
         header = []

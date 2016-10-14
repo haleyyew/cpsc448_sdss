@@ -14,6 +14,17 @@ def get_foreign_key(table_row, join_attributes_index):
         foreign_key += str(string)
     return foreign_key
 
+
+def check_valid_foreign_key(foreign_key):
+    try:
+        if int(foreign_key) < 0:
+            return False
+        else:
+            return True
+    except Exception:
+        return True
+
+
 def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table_attributes):
     """
     Joins the current table self_sql_table with another table other_sql_table on
@@ -58,7 +69,9 @@ def table_join(self_sql_table, my_table_attributes, other_sql_table, other_table
     for self_row in self_sql_table.table_rows:
         self_row_values = self_sql_table.table_rows[self_row]
         foreign_key = get_foreign_key(self_row_values, my_table_attributes_index)
-        self_row_values.extend(other_sql_table.get_row(foreign_key))
+
+        if check_valid_foreign_key(foreign_key):
+            self_row_values.extend(other_sql_table.get_row(foreign_key))
         counter += 1
         if counter%print_info == 0:
             print "I am finding a row in other_sql_table to join with row", counter, "in self_sql_table"

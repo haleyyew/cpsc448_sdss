@@ -122,6 +122,11 @@ def debug():
                     print"=====sqlstatement====="
                     for row in SqlStatement_table.table_rows:
                         print SqlStatement_table.table_rows[row]
+                elif table_name=="debug_session":
+                    session = split_command[1]
+                    list_of_rows = table.session_group[session]
+                    for row in list_of_rows:
+                        print row
 
             except Exception:
                 print Exception
@@ -137,11 +142,11 @@ if __name__ == '__main__':
     config.read('config.ini')
     num_of_sessions = int(config.get('Config','num_of_sessions'))
 
+
+    s = signal.signal(signal.SIGINT, signal.SIG_IGN)
     # Read csv files and store contents of each csv into a SqlTable class object
     # Then join tables by joining contents of two SqlTable objects
     table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
-
-    s = signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     debug()
 
@@ -160,6 +165,7 @@ if __name__ == '__main__':
             list_of_rows = table.session_group[group]
 
             writer.writerow(table.attributes)
+            writer.writerow(["--"])
             for row in list_of_rows:
                 #flattened_row = flatten(row)
                 writer.writerow(row)
