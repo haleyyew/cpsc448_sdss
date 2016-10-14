@@ -35,3 +35,4 @@ For example, when the console displays "Please enter command:", type "session 1 
 TODO:
 Fix incorrect extraction of statements in sqlstatement.csv
 Allow random sampling of sessions by using reservoir sampling algorithm
+

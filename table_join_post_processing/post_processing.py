@@ -1,7 +1,10 @@
 import csv
 import os
-from table_join import open_csv
+
 import ConfigParser
+import sys
+sys.path.insert(0, '../table_join')
+import open_csv
 
 __author__ = 'HY'
 
