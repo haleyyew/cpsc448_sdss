@@ -5,6 +5,8 @@ Configurations of the script is located in config.ini
 The location of source csv files is specified in the 'input'
 The location of the output is specified in 'output' 
 The number of sessions to output is specified in 'num_of_sessions'
+'random_sampling=1' turns on random sampling, otherwise sequentially add the first num_of_sessions sessions
+'sqlstatement_no_regex=1' switches to an alternative method to read sqlstatement.csv
 
 To run the script,
 python ./main.py
@@ -28,8 +30,10 @@ The script now halts for user to type a command to query rows in the joined tabl
 session <int sessionID> <int rankInSession>
 sql <int sqlID>
 statement <int statementID>
+close
 
-For example, when the console displays "Please enter command:", type "session 1 1" to display the row in the joined sessionlog table that has sessionID=1 and rankInSession=1. "statement 24060378" will print the row in sqlstatement table with statementID=24060378, and so on
+For example, when the console displays "Please enter command:", type "session 1 1" to display the row in the joined sessionlog table that has sessionID=1 and rankInSession=1. "statement 24060378" will print the row in sqlstatement table with statementID=24060378, and so on.
+"close" will exit the user interaction mode and start outputting the sessions to csv files.
 
 
 TODO:

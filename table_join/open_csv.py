@@ -1,155 +1,209 @@
 __author__ = 'HY'
 import csv
-import re
 import sys
 from open_csv_helper import *
 import sql_table
 
-def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
-    """
-    This is the provided parser for sqlstatement.csv
-    """
-    queryStatement = []
-    j =0
-    currLineNum = -1
-    prevLineNum =-1
-    prevLine=""
 
-    statementID = 0
-    hits = 0
-    TemplateID = 0
-    studyperiod = 0
+def add_row_to_table(row,new_sql_table,sqllog_SqlTable):
+    revised_row = []
+    try:
+        statementID = row[0]
+        hits = row[-3]
+        TemplateID = row[-2]
+        studyperiod = row[-1]
+        statement = ""
+        for string in row[1:-3]:
+            statement +=" "
+            statement +=string
 
-    current_time = time.time()
+        revised_row.extend([statementID,statement,hits,TemplateID,studyperiod])
 
-    matchCurrLine = ""
-    matchCurrLine2 = ""
-    matchCurrLine3 = ""
-    matchPrevLine = ""
-
-    with open(inputFile, 'rb') as f:
-        for currLine in f:
-            currLineNum +=1
-
-            current_time = measure_time(current_time)
-
-            if currLineNum %print_info==0:
-                print "I am still alive, reading currLineNum", currLineNum
-                print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
-                print "I have added", new_sql_table.num_rows, "rows"
-
-                debug_stat = debug(new_sql_table.num_rows, True)
-                if debug_stat:
-                    return new_sql_table
+        if str(revised_row[0]) in sqllog_SqlTable.sqlstatement_group:
+            if int(statementID) %print_info_small==0:
+                print "adding row with statementID", revised_row[0]
+                print revised_row
+            new_sql_table.add_row(revised_row)
 
 
-            if currLineNum == 0:
-                match = re.search("(.+),(.+),(.+),(.+),(.+)", currLine)
-                row = []
-                row.append(match.group(1))
-                row.append(match.group(2))
-                row.append(match.group(3))
-                row.append(match.group(4))
-                row.append(match.group(5).strip('\r'))
-                new_sql_table.declare_table_attributes(row)
-                new_sql_table.declare_list_of_keys(list_of_keys)
-                continue
-            if currLineNum == 1:
-                continue
 
-            matchCurrLine = re.search(r'^(\d+),(.*)', currLine)
-            matchCurrLine2 = re.search('^(.*),(\d+),(\d+),(\d+)', currLine)
-            matchCurrLine3 = re.search('^(\d+),(.*),(\d+),(\d+),(\d+)', currLine)
-            matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
-            if ( matchCurrLine and   matchPrevLine ) :
-                #wrap up previous statement
-                try:
-                    queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
-                    hits = int(matchPrevLine.group(2))
-                    TemplateID = int(matchPrevLine.group(3))
-                    studyperiod = int(matchPrevLine.group(4))
-                    add_row_from_regex_match(new_sql_table,
-                                         statementID,queryStatement,hits,TemplateID,studyperiod,
-                                         sqllog_SqlTable)
-                except (Exception):
-                    print_exception("parseSqlStatement(matchCurrLine and matchPrevLine)",
-                                    "currLineNum", currLineNum, currLineNum)
 
-                queryStatement = []
+    except Exception:
+        print "Exception in join_elements_to_string, row=",row
 
-            elif matchCurrLine3:
-                try:
-                    statementID =  int(matchCurrLine3.group(1))
-                    if statementID>max_sql_statement_rows:
-                        statementID = -1
-                    queryStatement.append(matchCurrLine3.group(2).strip('\n').strip('\r'))
-                    hits = int(matchCurrLine3.group(3))
-                    TemplateID = int(matchCurrLine3.group(4))
-                    studyperiod = int(matchCurrLine3.group(5))
 
-                    add_row_from_regex_match(new_sql_table,
-                                         statementID,queryStatement,hits,TemplateID,studyperiod,
-                                         sqllog_SqlTable)
-                except (Exception):
-                    print_exception("parseSqlStatement(matchCurrLine3)",
-                                    "currLineNum", currLineNum, currLineNum)
 
-                queryStatement = []
+def evaluate_row(current_line,previous_line,statementID,row_accumulator,new_sql_table,sqllog_SqlTable):
+    evaluation_1 = 1
+    evaluation_2 = 1
+    evaluation_3 = 1
+    evaluation_4 = 1
 
-            if matchCurrLine:
-                # start new statment
-                #print "matchCurrLine", currLine
-                try:
-                    statementID =  int(matchCurrLine.group(1))
-                    if statementID>max_sql_statement_rows:
-                        print_exception("parseSqlStatement(statementID>max_sql_statement_rows)",
-                                        "statementID", statementID, statementID)
-                        statementID = -1
-                    queryStatement= []
-                    j = 0
-                    queryStatement.append(matchCurrLine.group(2).strip('\n').strip('\r'))
-                    j+=1
-                except (Exception):
-                    print_exception("parseSqlStatement(matchCurrLine)",
-                                    "currLineNum", currLineNum, currLineNum)
+    prnt ("current_line=",current_line)
+    try:
+        row_first_item = int(current_line[0].strip())
+        if (statementID+1>row_first_item) or (row_first_item-statementID > 68027572):
+            raise Exception
+    except Exception:
+        #current_line is not the beginning of a new csv row
+        prnt ("not evaluation_1")
+        evaluation_1 = 0
 
-            elif matchCurrLine2:
-                #skip this current line
-                pass
+    try:
+        first_number = int(current_line[-1].strip())
+        second_number = int(current_line[-2].strip())
+        third_number = int(current_line[-3].strip())
 
-            elif currLineNum !=0 and currLineNum !=1:
-                #print "just adding", currLine
-                try:
-                    queryStatement.append(currLine.strip('\n').strip('\r'))
-                    j+=1
-                except (Exception):
-                    print_exception("parseSqlStatement(currLineNum !=0 and currLineNum !=1)",
-                                    "currLineNum", currLineNum, currLineNum)
+        if (first_number > 3 or first_number < 0 ):
+            raise Exception
+    except Exception:
+        # current_line is not the end of a csv row
+        prnt ("not evaluation_2")
+        evaluation_2 = 0
 
-            prevLine = currLine
-            prevLineNum = currLineNum
+    try:
+        first_number = int(previous_line[-1].strip())
+        second_number = int(previous_line[-2].strip())
+        third_number = int(previous_line[-3].strip())
 
-    matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
-    if matchPrevLine:
-        try:
-            queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
-            hits = int(matchPrevLine.group(2))
-            TemplateID = int(matchPrevLine.group(3))
-            studyperiod = int(matchPrevLine.group(4))
-            add_row_from_regex_match(new_sql_table,
-                                 statementID,queryStatement,hits,TemplateID,studyperiod,
-                                 sqllog_SqlTable)
+        if (first_number > 3 or first_number < 0 ):
+            raise Exception
+    except Exception:
+        # previous_line is not the end of a csv row
+        prnt ("not evaluation_3")
+        evaluation_3 = 0
 
-        except (Exception):
-            print_exception("parseSqlStatement",
-                            "currLineNum", currLineNum, currLineNum)
+    try:
+        row_first_item = int(previous_line[0].strip())
+        if (statementID+1>row_first_item) or (row_first_item-statementID > 68027572):
+            raise Exception
+    except Exception:
+        #current_line is the beginning of a new csv row and
+        prnt ("not evaluation_4")
+        evaluation_4 = 0
+
+    if evaluation_1 and evaluation_2 and evaluation_3 and evaluation_4:
+        prnt ("evaluation_1 and evaluation_2 and evaluation_3 and evaluation_4",current_line,previous_line)
+        # previous_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+        # current_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+        add_row_to_table(current_line,new_sql_table,sqllog_SqlTable)
+
+        statementID +=1
+
+    elif evaluation_1 and evaluation_3 and evaluation_4:
+        prnt ("evaluation_1 and evaluation_3 and evaluation_4",current_line,previous_line)
+        # previous_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+        # current_line==[statement_ID,statement]
+
+        row_accumulator = []
+        row_accumulator.extend(current_line)
+
+    elif evaluation_1 and evaluation_2 and evaluation_3:
+        prnt ("evaluation_1 and evaluation_2 and evaluation_3",current_line,previous_line)
+        # previous_line==[statement,hits,TemplateID,studyperiod]
+        # current_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+
+        add_row_to_table(row_accumulator,new_sql_table,sqllog_SqlTable)
+        statementID +=1
+
+        row_accumulator = []
+        add_row_to_table(current_line,new_sql_table,sqllog_SqlTable)
+        statementID +=1
+
+    elif evaluation_1 and evaluation_3:
+        prnt ("evaluation_1 and evaluation_3",current_line,previous_line)
+        # previous_line==[statement,hits,TemplateID,studyperiod]
+        # current_line==[statement_ID,statement]
+
+        add_row_to_table(row_accumulator,new_sql_table,sqllog_SqlTable)
+        statementID +=1
+
+        row_accumulator = []
+        row_accumulator.extend(current_line)
+
+    elif evaluation_1 and evaluation_2 and statementID==1:
+        prnt ("evaluation_1 and evaluation_2 and statementID==1",current_line,previous_line)
+        # previous_line==[]
+        # current_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+
+        add_row_to_table(current_line,new_sql_table,sqllog_SqlTable)
+        statementID +=1
+
+    elif evaluation_1 and evaluation_2:
+        prnt ("evaluation_1 and evaluation_2",current_line,previous_line)
+        # previous_line==[]
+        # current_line==[statement_ID,statement,hits,TemplateID,studyperiod]
+
+        add_row_to_table(current_line,new_sql_table,sqllog_SqlTable)
+        statementID +=1
+
+    elif len(current_line)==1 and current_line[0].strip()=="(68027572 rows affected)":
+        add_row_to_table(row_accumulator,new_sql_table,sqllog_SqlTable)
+
+    elif not(evaluation_1) and not(evaluation_2):
+        prnt ("not(evaluation_1) and not(evaluation_2)",current_line,previous_line)
+        # current_line==[statement]
+        row_accumulator.extend(current_line)
+
+    elif evaluation_1:
+        prnt ("evaluation_1",current_line,previous_line)
+        # current_line==[statement_ID,statement]
+        row_accumulator = []
+        row_accumulator.extend(current_line)
+
+    else:
+        row_accumulator.extend(current_line)
+
+    return (row_accumulator,statementID)
+
+
+def open_sqlstatement_csv(new_sql_table, path, list_of_keys, sqllog_SqlTable, use_alternative_method):
+    if use_alternative_method:
+        statementID = 1
+        row_accumulator = []
+        previous_line = []
+        counter = 0
+
+        with open(path, 'rt') as csv_file:
+            file_reader = csv.reader(csv_file, delimiter=',')
+            for current_line in file_reader:
+
+                if counter %print_info==0:
+                    print "I am still alive, reading currLineNum", counter
+                    print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
+                    print "I have added", new_sql_table.num_rows, "rows"
+                    debug_stat = debug(new_sql_table.num_rows, True)
+                    if debug_stat:
+                        return new_sql_table
+
+                if (counter == 0):
+                    row_size = len(current_line)
+                    counter += 1
+                    new_sql_table.declare_table_attributes(current_line)
+                    new_sql_table.declare_list_of_keys(list_of_keys)
+
+                    print "The number of attributes for table", new_sql_table.table_name, "is: ", row_size
+                    print "The attributes of table", new_sql_table.table_name, "are: ", '|'.join(current_line)
+
+                # The second row always store redundant information
+                elif (counter == 1):
+                    counter += 1
+
+                else:
+                    row_accumulator,statementID = evaluate_row(current_line,previous_line,
+                                                   statementID,row_accumulator,
+                                                   new_sql_table,sqllog_SqlTable)
+                    previous_line = current_line
+
+    else:
+        parseSqlStatement(new_sql_table, path, list_of_keys, sqllog_SqlTable)
     print "I have finished reading sqlstatement.csv"
 
 
 def open_csv_file(path, list_of_keys, csv_name,
                   sessions_flag, num_of_sessions,
                   sqllog_flag, sessionlog_SqlTable,
-                  sqlstatement_flag, sqllog_SqlTable):
+                  sqlstatement_flag, sqllog_SqlTable, use_alternative_method):
     """
     Read a csv file in path, and store the contents of the csv file into a newly created SqlTable class object,
     where each row of the csv file is represented as a list of strings and stored by SqlTable.add_row(row)
@@ -161,7 +215,7 @@ def open_csv_file(path, list_of_keys, csv_name,
     new_sql_table = sql_table.SqlTable(table_name)
 
     if sqlstatement_flag:
-        parseSqlStatement(new_sql_table, path, list_of_keys, sqllog_SqlTable)
+        open_sqlstatement_csv(new_sql_table, path, list_of_keys, sqllog_SqlTable, use_alternative_method)
         sqllog_SqlTable.sqlstatement_group = {}
         return new_sql_table
 

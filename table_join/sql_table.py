@@ -71,7 +71,10 @@ class SqlTable:
             if i>0:
                 hash_string += "_"
             index = self.list_of_key_indexes[i]
-            hash_string += str(row_values[index])
+            try:
+                hash_string += str(row_values[index])
+            except Exception:
+                print "Exception in self.hash_list_of_key_indexes_to_key, row_values=",row_values
 
         return hash_string
 

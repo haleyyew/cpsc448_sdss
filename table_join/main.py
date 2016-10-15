@@ -1,13 +1,11 @@
+__author__ = 'HY'
+
 import csv
 import ConfigParser
 import signal
-
-__author__ = 'HY'
-
 import table_join
 import open_csv
 import time
-
 import sys
 
 class Logger(object):
@@ -42,7 +40,7 @@ def unit_test(config, num_of_sessions):
                                               config.get('Table1','table_name'),
                                               1,num_of_sessions,
                                               0,0,
-                                              0,0)
+                                              0,0,0)
 
     SqlLog_keys = config.get('Table2','keys').split(',')
     SqlLog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table2','path'),
@@ -50,7 +48,7 @@ def unit_test(config, num_of_sessions):
                                           config.get('Table2','table_name'),
                                           0,0,
                                           1,sessionlog_table,
-                                          0,0)
+                                          0,0,0)
 
     SqlStatement_keys = config.get('Table3','keys').split(',')
     SqlStatement_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table3','path'),
@@ -58,7 +56,7 @@ def unit_test(config, num_of_sessions):
                                                 config.get('Table3','table_name'),
                                                 0,0,
                                                 0,0,
-                                                1,SqlLog_table)
+                                                1,SqlLog_table,int(config.get('Config','sqlstatement_no_regex')))
 
     my_join_attr = config.get('Table2','my_join_attributes').split(',')
     other_join_attr = config.get('Table2','their_join_attributes').split(',')

@@ -47,5 +47,5 @@ mv  -v -f /ubc/cs/home/h/haleyyew/table_join_post_processing/* /ubc/cs/research/
 mv  -v -f /ubc/cs/home/h/haleyyew/output_test/* /ubc/cs/research/connections/data/SDSS/code/output_test
 
 cd /ubc/cs/research/connections/data/SDSS/code/table_join
-screen -S haoran_3
+screen -S haoran_4
 python ./main.py 

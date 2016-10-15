@@ -32,7 +32,7 @@ if __name__ == '__main__':
                                               config.get('Table1','table_name'),
                                               0,0,
                                               0,0,
-                                              0,0)
+                                              0,0,0)
 
         requestor = session_table.attributes.index("requestor")
         error = session_table.attributes.index("error")

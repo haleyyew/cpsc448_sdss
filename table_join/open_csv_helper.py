@@ -1,6 +1,8 @@
+import sys
+
 __author__ = 'HY'
 import time
-
+import re
 
 print_info = 2000000
 max_sql_statement_rows = 68027572
@@ -8,6 +10,10 @@ print_info_small = 100
 print_info_medium = 200000
 print_info_tiny = 5
 print_info_pico = 1
+
+def prnt(*argv):
+    #print *argv
+    return
 
 def measure_time(early):
     later = time.time()
@@ -26,6 +32,30 @@ def debug(num_rows, stop_after_few_rows):
     #         return True
     #     # else:
     #     #     return False
+
+    # while (1):
+    #     try:
+    #         response = raw_input("Please enter command: ")
+    #     except Exception:
+    #         continue
+    #     split_command = response.split()
+    #     interrupt = 1
+    #     #print split_command
+    #     if response == "close":
+    #         break
+    #
+    #     else:
+    #         try:
+    #             table_name = split_command[0]
+    #
+    #             if table_name=="statement":
+    #                 statementID = split_command[1]
+    #                 print SqlStatement_table.get_row(statementID)
+    #
+    #         except Exception:
+    #             print Exception
+    #             continue
+
     return False
 
 def print_exception(source, element_name, element, line_number):
@@ -68,3 +98,144 @@ def add_row_from_regex_match(new_sql_table,
             print row
         new_sql_table.add_row(row)
 
+
+
+def parseSqlStatement(new_sql_table, inputFile, list_of_keys, sqllog_SqlTable):
+    """
+    This is the provided parser for sqlstatement.csv
+    """
+    queryStatement = []
+    j =0
+    currLineNum = -1
+    prevLineNum =-1
+    prevLine=""
+
+    statementID = 0
+    hits = 0
+    TemplateID = 0
+    studyperiod = 0
+
+    current_time = time.time()
+
+    matchCurrLine = ""
+    matchCurrLine2 = ""
+    matchCurrLine3 = ""
+    matchPrevLine = ""
+
+    with open(inputFile, 'rb') as f:
+        for currLine in f:
+            currLineNum +=1
+
+            current_time = measure_time(current_time)
+
+            if currLineNum %print_info==0:
+                print "I am still alive, reading currLineNum", currLineNum
+                print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
+                print "I have added", new_sql_table.num_rows, "rows"
+
+                debug_stat = debug(new_sql_table.num_rows, True)
+                if debug_stat:
+                    return new_sql_table
+
+
+            if currLineNum == 0:
+                match = re.search("(.+),(.+),(.+),(.+),(.+)", currLine)
+                row = []
+                row.append(match.group(1))
+                row.append(match.group(2))
+                row.append(match.group(3))
+                row.append(match.group(4))
+                row.append(match.group(5).strip('\r'))
+                new_sql_table.declare_table_attributes(row)
+                new_sql_table.declare_list_of_keys(list_of_keys)
+                continue
+            if currLineNum == 1:
+                continue
+
+            matchCurrLine = re.search(r'^(\d+),(.*)', currLine)
+            matchCurrLine2 = re.search('^(.*),(\d+),(\d+),(\d+)', currLine)
+            matchCurrLine3 = re.search('^(\d+),(.*),(\d+),(\d+),(\d+)', currLine)
+            matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
+            if ( matchCurrLine and   matchPrevLine ) :
+                #wrap up previous statement
+                try:
+                    queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
+                    hits = int(matchPrevLine.group(2))
+                    TemplateID = int(matchPrevLine.group(3))
+                    studyperiod = int(matchPrevLine.group(4))
+                    add_row_from_regex_match(new_sql_table,
+                                         statementID,queryStatement,hits,TemplateID,studyperiod,
+                                         sqllog_SqlTable)
+                except (Exception):
+                    print_exception("parseSqlStatement(matchCurrLine and matchPrevLine)",
+                                    "currLineNum", currLineNum, currLineNum)
+
+                queryStatement = []
+
+            elif matchCurrLine3:
+                try:
+                    statementID =  int(matchCurrLine3.group(1))
+                    if statementID>max_sql_statement_rows:
+                        statementID = -1
+                    queryStatement.append(matchCurrLine3.group(2).strip('\n').strip('\r'))
+                    hits = int(matchCurrLine3.group(3))
+                    TemplateID = int(matchCurrLine3.group(4))
+                    studyperiod = int(matchCurrLine3.group(5))
+
+                    add_row_from_regex_match(new_sql_table,
+                                         statementID,queryStatement,hits,TemplateID,studyperiod,
+                                         sqllog_SqlTable)
+                except (Exception):
+                    print_exception("parseSqlStatement(matchCurrLine3)",
+                                    "currLineNum", currLineNum, currLineNum)
+
+                queryStatement = []
+
+            if matchCurrLine:
+                # start new statment
+                #print "matchCurrLine", currLine
+                try:
+                    statementID =  int(matchCurrLine.group(1))
+                    if statementID>max_sql_statement_rows:
+                        print_exception("parseSqlStatement(statementID>max_sql_statement_rows)",
+                                        "statementID", statementID, statementID)
+                        statementID = -1
+                    queryStatement= []
+                    j = 0
+                    queryStatement.append(matchCurrLine.group(2).strip('\n').strip('\r'))
+                    j+=1
+                except (Exception):
+                    print_exception("parseSqlStatement(matchCurrLine)",
+                                    "currLineNum", currLineNum, currLineNum)
+
+            elif matchCurrLine2:
+                #skip this current line
+                pass
+
+            elif currLineNum !=0 and currLineNum !=1:
+                #print "just adding", currLine
+                try:
+                    queryStatement.append(currLine.strip('\n').strip('\r'))
+                    j+=1
+                except (Exception):
+                    print_exception("parseSqlStatement(currLineNum !=0 and currLineNum !=1)",
+                                    "currLineNum", currLineNum, currLineNum)
+
+            prevLine = currLine
+            prevLineNum = currLineNum
+
+    matchPrevLine = re.search('^(.*),(\d+),(\d+),(\d+)', prevLine)
+    if matchPrevLine:
+        try:
+            queryStatement.append(matchPrevLine.group(1).strip('\n').strip('\r'))
+            hits = int(matchPrevLine.group(2))
+            TemplateID = int(matchPrevLine.group(3))
+            studyperiod = int(matchPrevLine.group(4))
+            add_row_from_regex_match(new_sql_table,
+                                 statementID,queryStatement,hits,TemplateID,studyperiod,
+                                 sqllog_SqlTable)
+
+        except (Exception):
+            print_exception("parseSqlStatement",
+                            "currLineNum", currLineNum, currLineNum)
+    print "I have finished reading sqlstatement.csv"
