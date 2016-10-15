@@ -154,8 +154,6 @@ if __name__ == '__main__':
     # Then join tables by joining contents of two SqlTable objects
     table,SqlLog_table,SqlStatement_table = unit_test(config, session_samples_indexes)
 
-    debug()
-
     print "printing the joined table to csv"
     # Convert the hierarchical table attributes to a flat representation
     #flattened_attributes = flatten(table.attributes)
@@ -180,6 +178,7 @@ if __name__ == '__main__':
 
     print "program took", (end-start)/60, "minutes"
 
+    debug()
     signal.signal(signal.SIGINT, s)
 
 

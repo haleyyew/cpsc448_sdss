@@ -89,6 +89,8 @@ def check_add_session_to_table(row, session_samples_indexes):
         print sessionID
         return True
 
+
+
     return result
 
 

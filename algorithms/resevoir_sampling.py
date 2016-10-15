@@ -27,8 +27,8 @@ def create_samples():
                 r = random.randint(0, index)
                 if r < sample_count:
                     sample_list[r] = index
-                # if index%print_info == 0:
-                #     print index
+                if index%print_info == 0:
+                    print index
         sample_list.sort()
     else:
         for index in range(sample_count):
