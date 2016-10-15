@@ -5,5 +5,9 @@ The output is a csv file 'user_item_matrix.csv' where each row is a session and 
 To run the script:
 python ./query_processing.py
 
+Debugging:
+When the script halts with "Please enter a command", type a number N and print all sessions with at least N queries
+Type "close" to exit debug mode
+
 TODO:
 Need to consider the rules specified in 'query_processing_rules.sh' to improve the parsing of each SQL statement, to produce more meaningful items in the user-item interaction matrix

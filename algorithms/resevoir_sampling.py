@@ -6,6 +6,7 @@ print_info = 100000
 
 def create_samples():
 
+    print "performing reservoir sampling of sessions"
     config = ConfigParser.ConfigParser()
     config.read('config.ini')
     sample_count = int(config.get('Config','num_of_sessions'))

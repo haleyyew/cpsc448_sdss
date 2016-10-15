@@ -11,22 +11,6 @@ import sys
 sys.path.insert(0, '../algorithms')
 import resevoir_sampling
 
-class Logger(object):
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = open("logfile.log", "a")
-
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-
-    def flush(self):
-        #this flush method is needed for python 3 compatibility.
-        #this handles the flush command by doing nothing.
-        #you might want to specify some extra behavior here.
-        pass
-
-
 
 def unit_test(config, session_samples_indexes):
     """
@@ -132,6 +116,23 @@ def debug():
             except Exception:
                 print Exception
                 continue
+
+
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("logfile.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass
+
 
 if __name__ == '__main__':
 

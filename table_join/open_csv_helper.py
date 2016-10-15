@@ -86,9 +86,8 @@ def check_add_session_to_table(row, session_samples_indexes):
         return (result)
 
     if sessionID in session_samples_indexes:
-        print sessionID
+        print "adding entry in sessionlog with sessionID",sessionID
         return True
-
 
 
     return result

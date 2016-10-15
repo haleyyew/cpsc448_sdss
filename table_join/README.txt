@@ -36,7 +36,7 @@ For example, when the console displays "Please enter command:", type "session 1 
 "close" will exit the user interaction mode and start outputting the sessions to csv files.
 
 
-TODO:
+Recently Fixed:
 Fix incorrect extraction of statements in sqlstatement.csv
 Allow random sampling of sessions by using reservoir sampling algorithm
 

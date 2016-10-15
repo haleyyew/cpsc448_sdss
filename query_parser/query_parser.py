@@ -1,10 +1,11 @@
-import os
-
 __author__ = 'Haoran Yu'
+import os
 # import query_parser
 import csv
 import ConfigParser
-import re
+import signal
+import time
+import sys
 
 print_info = 2000000
 
@@ -143,10 +144,38 @@ def debug():
                 continue
     return
 
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("execution_log.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass
+
+
 if __name__ == '__main__':
+
+    sys.stdout = Logger()
+    start = time.time()
+    s = signal.signal(signal.SIGINT, signal.SIG_IGN)
+
     config = ConfigParser.ConfigParser()
     config.read('../table_join/config.ini')
     sessions_dir = config.get('Parser','inputDir')
+
+    # since iterating through all sessions to add all possible tokens takes O(n^n) time,
+    # I will only create a matrix using N sessions that has submitted more than M uniques
+    only_create_a_matrix_for_N_sessions = int(config.get('Parser','only_create_a_matrix_for_N_sessions'))
+    N = int(config.get('Parser','N'))
+    session_with_more_than_M_unique_queries = int(config.get('Parser','session_with_more_than_M_unique_queries'))
+    M = int(config.get('Parser','M'))
 
     list_of_session = os.listdir(sessions_dir)
 
@@ -158,12 +187,37 @@ if __name__ == '__main__':
         session_tokens.print_all_tokens()
         all_session_items.append(session_tokens)
 
+    # print some info from time to time
+    timer1 = time.time()
+    timer2 = time.time()
+
+    if only_create_a_matrix_for_N_sessions and session_with_more_than_M_unique_queries:
+        sessions_count = 0
+        temp_list_of_sessions = []
+        for session in all_session_items:
+            sessions_count+=1
+            if sessions_count > N:
+                break
+            if session.number_of_queries > M:
+                temp_list_of_sessions.append(session)
+        if len(temp_list_of_sessions) < 1:
+            print "M in session_with_more_than_M_unique_queries is too large, no sessions has that many queries"
+            debug()
+        all_session_items = temp_list_of_sessions
+
+
     print "iterating user-items"
     for session_index in range(len(all_session_items)):
         session = all_session_items[session_index]
-        #print "iterating ", session.session_number
-
         session_items = session.all_tokens.keys()
+
+        timer2 = time.time()
+        diff = timer2 - timer1
+        if diff > 60:
+            print "I am currently iterating session", session.session_number, \
+                "with the following session.all_tokens: ",session_items
+            timer1 = timer2
+
         # session_items = session_items.sort()
         if session_index !=0:
             for i in range(session_index):
@@ -197,4 +251,8 @@ if __name__ == '__main__':
                 session_items.append(session.all_tokens[item])
             writer.writerow(session_items)
 
+
+    end = time.time()
+    print "program took", (end-start)/60, "minutes"
     debug()
+    signal.signal(signal.SIGINT, s)
