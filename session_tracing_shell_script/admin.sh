@@ -41,6 +41,7 @@ stat 1.csv
 haoran_3
 haoran_4
 haoran_6
+haoran_5
 
 mv  -v -f /ubc/cs/home/h/haleyyew/table_join/* /ubc/cs/research/connections/data/SDSS/code/table_join
 mv  -v -f /ubc/cs/home/h/haleyyew/dataset/* /ubc/cs/research/connections/data/SDSS/code/dataset

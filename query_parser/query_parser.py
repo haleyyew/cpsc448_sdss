@@ -6,6 +6,9 @@ import csv
 import ConfigParser
 import re
 
+print_info = 2000000
+
+
 class SessionTokens:
     def __init__(self, session_number):
         self.session_number = session_number
@@ -16,6 +19,7 @@ class SessionTokens:
         self.tokens_group['orderby'] = {}
         self.tokens_group['groupby'] = {}
         self.all_tokens = {}
+        self.number_of_queries = 0
 
     def add_token(self, token_group, token):
         tokens_group_dict = self.tokens_group[token_group]
@@ -105,6 +109,7 @@ def parse_simple(session_tokens, filename):
 
     with open( filename ) as f :
         for line in f :
+            session_tokens.number_of_queries +=1
             line = line.lower()
             partitions = process_line(line,partitions)
 
@@ -112,6 +117,31 @@ def parse_simple(session_tokens, filename):
                 session_tokens.split_string_and_store(key,partitions[key])
             clear_dictionary(partitions)
 
+def debug():
+    while (1):
+        try:
+            response = raw_input("Please enter command: ")
+        except Exception:
+            continue
+        split_command = response.split()
+
+        if response == "close":
+            break
+
+        else:
+            try:
+                print len(all_session_items)
+                num = int(split_command[0])
+
+                for session in all_session_items:
+                    if session.number_of_queries<num:
+                        continue
+                    print session.print_all_tokens()
+
+            except Exception:
+                print Exception
+                continue
+    return
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
@@ -128,9 +158,10 @@ if __name__ == '__main__':
         session_tokens.print_all_tokens()
         all_session_items.append(session_tokens)
 
+    print "iterating user-items"
     for session_index in range(len(all_session_items)):
         session = all_session_items[session_index]
-        print "iterating ", session.session_number
+        #print "iterating ", session.session_number
 
         session_items = session.all_tokens.keys()
         # session_items = session_items.sort()
@@ -146,13 +177,14 @@ if __name__ == '__main__':
                     if item not in session_items:
                         session.all_tokens[item] = 0
 
+    print "output session_all_tokens"
     with open(config.get('Parser','outputDir')+'user_item_matrix'+'.csv', 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
         session = all_session_items[-1]
         header = []
         session_all_tokens = session.all_tokens.keys()
         session_all_tokens.sort()
-        print session_all_tokens
+        #print session_all_tokens
         for token in session_all_tokens:
             header.append(token)
         writer.writerow(header)
@@ -164,3 +196,5 @@ if __name__ == '__main__':
             for item in items:
                 session_items.append(session.all_tokens[item])
             writer.writerow(session_items)
+
+    debug()

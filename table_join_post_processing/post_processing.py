@@ -8,7 +8,7 @@ import open_csv
 
 __author__ = 'HY'
 
-print_info = 100000
+print_info = 2000000
 
 def prnt(counter,*argv):
     if counter%print_info != 0:
@@ -53,13 +53,14 @@ def debug():
 
         else:
             try:
+                print len(random_storage)
                 num_of_samples = int(split_command[0])
                 counter = 0
                 for row in random_storage:
                     counter+=1
                     if counter>num_of_samples:
                         break
-                    print random_storage[row]
+                    print row,random_storage[row]
 
             except Exception:
                 print Exception
@@ -97,6 +98,7 @@ if __name__ == '__main__':
 
             except Exception:
                 prnt(counter, "Exception occurred in",session_table.table_rows[row])
+                continue
 
         if len(output_statements) == 0:
             continue
@@ -105,8 +107,9 @@ if __name__ == '__main__':
              for row in output_statements:
                 counter += 1
                 prnt(counter,row)
-                store(counter,random_storage,filename,row)
-
                 writer.writerow(row)
+                 
+             if len(output_statements)>2:
+                store(counter,random_storage,filename,output_statements)
 
     debug()
