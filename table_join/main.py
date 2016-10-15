@@ -8,6 +8,9 @@ import open_csv
 import time
 import sys
 
+sys.path.insert(0, '../algorithms')
+import resevoir_sampling
+
 class Logger(object):
     def __init__(self):
         self.terminal = sys.stdout
@@ -25,7 +28,7 @@ class Logger(object):
 
 
 
-def unit_test(config, num_of_sessions):
+def unit_test(config, session_samples_indexes):
     """
     Read sessionlog.csv, sqllog.csv, and sqlstatement.csv and store them in SqlTable class objects
     sessionlog_table, SqlLog_table, SqlStatement_table.
@@ -38,7 +41,7 @@ def unit_test(config, num_of_sessions):
     sessionlog_table = open_csv.open_csv_file(config.get('Config','input')+config.get('Table1','path'),
                                               sessionlog_keys,
                                               config.get('Table1','table_name'),
-                                              1,num_of_sessions,
+                                              1,session_samples_indexes,
                                               0,0,
                                               0,0,0)
 
@@ -140,11 +143,16 @@ if __name__ == '__main__':
     config.read('config.ini')
     num_of_sessions = int(config.get('Config','num_of_sessions'))
 
+    # random sampling sessions
+    session_samples_indexes = resevoir_sampling.create_samples()
+    session_samples_indexes.append(len(session_samples_indexes))
+    # for i in xrange(0,len(session_samples_indexes),1000):
+    #     print(session_samples_indexes[i])
 
     s = signal.signal(signal.SIGINT, signal.SIG_IGN)
     # Read csv files and store contents of each csv into a SqlTable class object
     # Then join tables by joining contents of two SqlTable objects
-    table,SqlLog_table,SqlStatement_table = unit_test(config, num_of_sessions)
+    table,SqlLog_table,SqlStatement_table = unit_test(config, session_samples_indexes)
 
     debug()
 

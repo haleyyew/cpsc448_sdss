@@ -5,6 +5,22 @@ from open_csv_helper import *
 import sql_table
 
 
+def increase_csv_field():
+    # This fixes the error "_csv.Error: field larger than field limit (131072)"
+    maxInt = sys.maxsize
+    decrement = True
+    while decrement:
+        # decrease the maxInt value by factor 10
+        # as long as the OverflowError occurs.
+
+        decrement = False
+        try:
+            csv.field_size_limit(maxInt)
+        except OverflowError:
+            maxInt = int(maxInt/10)
+            decrement = True
+
+
 def add_row_to_table(row,new_sql_table,sqllog_SqlTable):
     revised_row = []
     try:
@@ -158,18 +174,21 @@ def evaluate_row(current_line,previous_line,statementID,row_accumulator,new_sql_
 
 
 def open_sqlstatement_csv(new_sql_table, path, list_of_keys, sqllog_SqlTable, use_alternative_method):
+    increase_csv_field()
+
     if use_alternative_method:
         statementID = 1
         row_accumulator = []
         previous_line = []
         counter = 0
 
-        with open(path, 'rt') as csv_file:
-            file_reader = csv.reader(csv_file, delimiter=',')
+        # rU: new-line character seen in unquoted field - do you need to open the file in universal-newline mode?
+        with open(path, 'rU') as csv_file:
+            file_reader = csv.reader(csv_file, delimiter=',', dialect=csv.excel_tab)
             for current_line in file_reader:
 
                 if counter %print_info==0:
-                    print "I am still alive, reading currLineNum", counter
+                    print "I am still alive, reading line", counter
                     print "My table is now", sys.getsizeof(new_sql_table.table_rows), "bytes"
                     print "I have added", new_sql_table.num_rows, "rows"
                     debug_stat = debug(new_sql_table.num_rows, True)
@@ -201,7 +220,7 @@ def open_sqlstatement_csv(new_sql_table, path, list_of_keys, sqllog_SqlTable, us
 
 
 def open_csv_file(path, list_of_keys, csv_name,
-                  sessions_flag, num_of_sessions,
+                  sessions_flag, session_samples_indexes,
                   sqllog_flag, sessionlog_SqlTable,
                   sqlstatement_flag, sqllog_SqlTable, use_alternative_method):
     """
@@ -210,6 +229,14 @@ def open_csv_file(path, list_of_keys, csv_name,
     """
     counter = 0
     row_size = 0
+
+    # These variables are only used when opening sessionlog
+    num_of_sessions = session_samples_indexes
+    if sessions_flag:
+        num_of_sessions = session_samples_indexes.pop()
+        #print "num_of_sessions", num_of_sessions
+        session_samples_indexes = create_indexes_hash(session_samples_indexes)
+    current_counter_index = 0
 
     table_name = csv_name.split('.')[0]
     new_sql_table = sql_table.SqlTable(table_name)
@@ -245,6 +272,8 @@ def open_csv_file(path, list_of_keys, csv_name,
             else:
                 if sqllog_flag:
                     check_sqllog_row_and_add(row, sessionlog_SqlTable, new_sql_table)
+                elif sessions_flag and not check_add_session_to_table(row,session_samples_indexes):
+                    continue
                 else:
                     new_sql_table.add_row(row)
                 counter += 1
@@ -262,7 +291,7 @@ def open_csv_file(path, list_of_keys, csv_name,
                         return new_sql_table
 
 
-                # I am only reading num_of_sessions sequentially, I will not store any more sessions after this
+                # I will not store any more sessions after num_of_sessions has been reached
                 if sessions_flag and (len(new_sql_table.session_group) > num_of_sessions):
                     new_sql_table.delete_session_group(row)
                     break

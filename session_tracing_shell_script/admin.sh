@@ -38,6 +38,9 @@ cp -a /ubc/cs/research/connections/data/SDSS/code/output/. /ubc/cs/home/h/haleyy
 
 stat 1.csv
 
+haoran_3
+haoran_4
+haoran_6
 
 mv  -v -f /ubc/cs/home/h/haleyyew/table_join/* /ubc/cs/research/connections/data/SDSS/code/table_join
 mv  -v -f /ubc/cs/home/h/haleyyew/dataset/* /ubc/cs/research/connections/data/SDSS/code/dataset
@@ -45,7 +48,8 @@ mv  -v -f /ubc/cs/home/h/haleyyew/output_processed/* /ubc/cs/research/connection
 mv  -v -f /ubc/cs/home/h/haleyyew/query_parser/* /ubc/cs/research/connections/data/SDSS/code/query_parser
 mv  -v -f /ubc/cs/home/h/haleyyew/table_join_post_processing/* /ubc/cs/research/connections/data/SDSS/code/table_join_post_processing
 mv  -v -f /ubc/cs/home/h/haleyyew/output_test/* /ubc/cs/research/connections/data/SDSS/code/output_test
+mv  -v -f /ubc/cs/home/h/haleyyew/algorithms/* /ubc/cs/research/connections/data/SDSS/code/algorithms
 
 cd /ubc/cs/research/connections/data/SDSS/code/table_join
-screen -S haoran_4
+screen -S haoran_6
 python ./main.py 

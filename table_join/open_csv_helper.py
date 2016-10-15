@@ -1,6 +1,5 @@
+__author__ = 'HY, ZZ'
 import sys
-
-__author__ = 'HY'
 import time
 import re
 
@@ -70,6 +69,27 @@ def check_sqllog_row_and_add(row, sessionlog_SqlTable, new_sql_table):
         if int(row[0])%print_info_small ==0:
             print "adding row with ID", row[0], "== sqlID"
         new_sql_table.add_row(row)
+
+def create_indexes_hash(session_samples_indexes):
+    indexes_hash = {}
+    for item in session_samples_indexes:
+        indexes_hash[item] = 0
+    return indexes_hash
+
+
+def check_add_session_to_table(row, session_samples_indexes):
+    result = False
+    sessionID = 0
+    try:
+        sessionID = int(row[0])-1
+    except Exception:
+        return (result)
+
+    if sessionID in session_samples_indexes:
+        print sessionID
+        return True
+
+    return result
 
 
 def add_row_from_regex_match(new_sql_table,
