@@ -112,4 +112,4 @@ if __name__ == '__main__':
              if len(output_statements)>2:
                 store(counter,random_storage,filename,output_statements)
 
-    debug()
+    #debug()

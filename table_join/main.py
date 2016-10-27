@@ -172,14 +172,13 @@ if __name__ == '__main__':
             writer.writerow(table.attributes)
             writer.writerow(["--"])
             for row in list_of_rows:
-                #flattened_row = flatten(row)
                 writer.writerow(row)
 
     end = time.time()
 
     print "program took", (end-start)/60, "minutes"
 
-    debug()
+    #debug()
     signal.signal(signal.SIGINT, s)
 
 

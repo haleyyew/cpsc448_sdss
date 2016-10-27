@@ -1,6 +1,5 @@
 __author__ = 'Haoran Yu'
 import os
-# import query_parser
 import csv
 import ConfigParser
 import signal
@@ -25,32 +24,23 @@ class SessionTokens:
     def add_token(self, token_group, token):
         tokens_group_dict = self.tokens_group[token_group]
         if token in tokens_group_dict:
-            #print token_group, token
             tokens_group_dict[token] += 1
-            #print 'tokens_group_dict[',token,']', tokens_group_dict[token]
+
         else:
-            #print token_group, token
             tokens_group_dict[token] = 1
-        # print self.tokens_group
+
 
     def print_all_tokens(self):
         print "Printing all tokens for session", self.session_number
 
-        # print self.tokens_group
-        # print len(self.tokens_group['select'])
-
         for group in [ 'select' , 'from' , 'where' , 'orderby' ,'groupby' ] :
             print "=====" + group + ":"
-            # print group in self.tokens_group[group]
             tokens_group_dict = self.tokens_group[group]
-            # print len(tokens_group_dict)
             for token in tokens_group_dict:
                 print token," = ",tokens_group_dict[token]
                 self.all_tokens[group+'_'+token] = tokens_group_dict[token]
 
     def split_string_and_store(self, token_group,list_of_tokens):
-        #list_of_tokens = str.split()
-        #print list_of_tokens
         for token in list_of_tokens:
             session_tokens.add_token(token_group, token)
 
@@ -71,19 +61,6 @@ def add_to_partition(word,partitions,last_partition):
 
 
 def process_line(line, partitions):
-    # select_from = re.search('^select(.*)from', line)
-    # from_where = re.search('^from(.*)where', line)
-    # from_orderby = re.search('^from(.*)order by', line)
-    # from_groupby = re.search('^from(.*)group by', line)
-    # where_groupby = re.search('^where(.*)group by', line)
-    # where_orderby = re.search('^where(.*)order by', line)
-    # groupby_orderby = re.search('^group by(.*)order by', line)
-    # from_select = re.search('^from(.*)select', line)
-    # where_select = re.search('^where(.*)select', line)
-    # groupby_select = re.search('^group by(.*)select', line)
-    #
-    # list_of_matches = [select_from,from_where,from_orderby,from_groupby,where_groupby,
-    #                    where_orderby,groupby_orderby,from_select,where_select,groupby_select]
 
     words = line.split()
     last_partition = "select"
@@ -154,9 +131,6 @@ class Logger(object):
         self.log.write(message)
 
     def flush(self):
-        #this flush method is needed for python 3 compatibility.
-        #this handles the flush command by doing nothing.
-        #you might want to specify some extra behavior here.
         pass
 
 
@@ -254,5 +228,5 @@ if __name__ == '__main__':
 
     end = time.time()
     print "program took", (end-start)/60, "minutes"
-    debug()
+    #debug()
     signal.signal(signal.SIGINT, s)

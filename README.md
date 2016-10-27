@@ -1,6 +1,8 @@
 This project analyzes SQL query logs stored in SkyServer web interface.
 SkyServer provides a public portal for users to submit raw SQL to query the Sloan Digital Sky Server (SDSS) database.
 
+The logs that we are analyzing can be found at ftp://dss001.pha.jhu.edu/SdssWeblogs/CSV/
+
 The pipeline of data analysis is:
 (1)extract data from query logs
 (2)perform data mining algorithms
