@@ -1,4 +1,0 @@
-sessionID,rankInSession,IpID,theTime,type,ID,templateID,sqlID,yy,mm,dd,hh,mi,ss,theTime,logID,clientIpID,requestor,server,dbname,access,elapsed,busy,rows,statementID,error,errorMessageID,isvisible,studyperiod,includeflag,statementID,statement,hits,TemplateID,studyperiod
---
-1,1,0,2003-02-09 20:02:15.000,1,99042076,0,99042076,2004,3,17,21,3,58,2004-03-17 21:03:58.000,2007,799931,skyserver.sdss.org,SDSSSQL004,BESTDR2,public,0.033,2.0000001E-3,0,1,0,1,1,1,1,1, 		    SELECT TOP 100 objID  ra  dec FROM PhotoPrimary WHERE ra > 185 and ra < 185.1 AND dec > 15 and dec < 15.1,1,7709,1
-1,2,0,2003-02-09 20:02:15.000,1,99042077,0,99042077,2004,3,17,21,3,58,2004-03-17 21:03:58.000,2007,799931,skyserver.sdss.org,SDSSSQL004,BESTDR2,public,0.033,2.0000001E-3,0,2,0,1,1,1,1,2, 		    SELECT TOP 100 objID  ra  dec photo FROM PhotoPrimary WHERE ra > 185 and ra < 185.1 AND dec > 15 and dec < 15.1,2,7739,1
